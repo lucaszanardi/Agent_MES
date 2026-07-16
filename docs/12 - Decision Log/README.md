@@ -19,6 +19,12 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 | DL-0003 | Capacidade, Ocupacao e Compatibilidade de Armazenagem | Aprovado | AS-0001 |
 | DL-0004 | Ciclo de Vida e Alteracoes Estruturais de Localizacoes | Aprovado | AS-0001 |
 | DL-0005 | Navegacao, Visualizacao e Recomendacao de Localizacoes | Aprovado | AS-0001 |
+| DL-0006 | Movimentacoes de Estoque em Etapas e Material em Transito | Aprovado | AS-0002 |
+| DL-0007 | Historico Imutavel, Eventos e Correcoes de Estoque | Aprovado | AS-0002 |
+| DL-0008 | Operacao Assistida e Validacoes em Tempo Real | Aprovado | AS-0002 |
+| DL-0009 | Jornada do Material e Jornada do Operador | Aprovado | AS-0002 |
+| DL-0010 | Arquitetura de Tarefas Operacionais | Aprovado | AS-0002 |
+| DL-0011 | Distribuicao de Tarefas por Identity, Role e Equipe Operacional | Aprovado | AS-0002 |
 
 ## Arquivos
 
@@ -27,3 +33,9 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 - `DL-0003 - Capacidade Ocupacao e Compatibilidade de Armazenagem.md`
 - `DL-0004 - Ciclo de Vida e Alteracoes Estruturais de Localizacoes.md`
 - `DL-0005 - Navegacao Visualizacao e Recomendacao de Localizacoes.md`
+- `DL-0006 - Movimentacoes de Estoque em Etapas e Material em Transito.md`
+- `DL-0007 - Historico Imutavel Eventos e Correcoes de Estoque.md`
+- `DL-0008 - Operacao Assistida e Validacoes em Tempo Real.md`
+- `DL-0009 - Jornada do Material e Jornada do Operador.md`
+- `DL-0010 - Arquitetura de Tarefas Operacionais.md`
+- `DL-0011 - Distribuicao de Tarefas por Identity Role e Equipe Operacional.md`

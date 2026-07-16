@@ -19,7 +19,9 @@ Uma Architecture Session consolida o contexto, os problemas analisados, alternat
 | ID | Titulo | Data | Status | Decision Logs Relacionados |
 |---|---|---|---|---|
 | AS-0001 | Arquitetura de Enderecamento e Localizacao de Estoque | 2026-07-15 | Registrada | DL-0001, DL-0002, DL-0003, DL-0004, DL-0005 |
+| AS-0002 | Movimentacoes de Estoque e Operacao Assistida | 2026-07-16 | Aprovada | DL-0006, DL-0007, DL-0008, DL-0009, DL-0010, DL-0011 |
 
 ## Arquivos
 
 - `AS-0001 - Arquitetura de Enderecamento e Localizacao de Estoque.md`
+- `AS-0002 - Movimentacoes de Estoque e Operacao Assistida.md`
