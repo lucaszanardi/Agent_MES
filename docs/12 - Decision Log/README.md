@@ -25,6 +25,16 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 | DL-0009 | Jornada do Material e Jornada do Operador | Aprovado | AS-0002 |
 | DL-0010 | Arquitetura de Tarefas Operacionais | Aprovado | AS-0002 |
 | DL-0011 | Distribuicao de Tarefas por Identity, Role e Equipe Operacional | Aprovado | AS-0002 |
+| DL-0012 | Independencia do MES em Relacao a ERPs | Aprovado | AS-0003 |
+| DL-0013 | Sistema Externo e Referencias Externas | Aprovado | AS-0003 |
+| DL-0014 | Hub de Sincronizacao | Aprovado | AS-0003 |
+| DL-0015 | Modelo Canonico e Adaptadores | Aprovado | AS-0003 |
+| DL-0016 | Politicas de Sincronizacao e Governanca | Aprovado | AS-0003 |
+| DL-0017 | Politicas de Evolucao e Versionamento | Aprovado | AS-0003 |
+| DL-0018 | Classificacao das Sincronizacoes | Aprovado | AS-0003 |
+| DL-0019 | Arquitetura Orientada a Eventos | Aprovado | AS-0003 |
+| DL-0020 | Resiliencia, Idempotencia, Auditoria e Reprocessamento | Aprovado | AS-0003 |
+| DL-0021 | Limites Fiscais do Produto | Aprovado | AS-0003 |
 
 ## Arquivos
 
@@ -39,3 +49,13 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 - `DL-0009 - Jornada do Material e Jornada do Operador.md`
 - `DL-0010 - Arquitetura de Tarefas Operacionais.md`
 - `DL-0011 - Distribuicao de Tarefas por Identity Role e Equipe Operacional.md`
+- `DL-0012 - Independencia do MES em Relacao a ERPs.md`
+- `DL-0013 - Sistema Externo e Referencias Externas.md`
+- `DL-0014 - Hub de Sincronizacao.md`
+- `DL-0015 - Modelo Canonico e Adaptadores.md`
+- `DL-0016 - Politicas de Sincronizacao e Governanca.md`
+- `DL-0017 - Politicas de Evolucao e Versionamento.md`
+- `DL-0018 - Classificacao das Sincronizacoes.md`
+- `DL-0019 - Arquitetura Orientada a Eventos.md`
+- `DL-0020 - Resiliencia Idempotencia Auditoria e Reprocessamento.md`
+- `DL-0021 - Limites Fiscais do Produto.md`
