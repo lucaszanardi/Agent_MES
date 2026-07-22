@@ -94,7 +94,11 @@ Agrupamento logico ou fisico de localizacoes de estoque com finalidade operacion
 
 **Definicao**
 
-Posicao fisica ou logica onde materiais podem ser armazenados, movimentados, reservados ou bloqueados.
+Referencia do posicionamento atual de uma Unidade Logistica em determinado momento. Nao e Aggregate Root concorrente, referencia um LocalDeEstoque e podera futuramente ser modelada como Value Object ou conceito equivalente.
+
+**Observacao**
+
+Preserva compatibilidade conceitual com os documentos anteriores de enderecamento, mas nao deve ser tratada como sinonimo de LocalDeEstoque.
 
 **Referencias**
 
@@ -540,6 +544,296 @@ Modo em que o MES recebe ou envia dados para sistemas externos conforme politica
 
 Modo em que parte dos dados nasce no MES e parte em sistemas externos.
 
+## 4.1 Termos do Dominio de Estoque
+
+### Dominio de Estoque
+
+**Definicao**
+
+Bounded context funcional responsavel por representar processos fisicos e virtuais de estoque e logistica interna.
+
+**Nao significa**
+
+Nao e um Aggregate Root chamado Estoque.
+
+**Referencias**
+
+- `../15 - Architecture Sessions/AS-0004 - Arquitetura do Dominio de Estoque.md`
+- `../12 - Decision Log/DL-0022 - Estoque como Dominio e Saldo como Projecao.md`
+
+### Aggregate Root
+
+**Definicao**
+
+Raiz de consistencia de um agregado, responsavel por proteger invariantes e coordenar alteracoes internas.
+
+**Nao significa**
+
+Nao representa necessariamente uma tabela ou tela.
+
+### Unidade Logistica
+
+**Definicao**
+
+Objeto fisico identificavel, manipulavel e rastreavel, que contem ou representa determinada quantidade de material.
+
+**Referencias**
+
+- `../12 - Decision Log/DL-0023 - Unidade Logistica como Agregado Fisico.md`
+
+### Tipo de Unidade Logistica
+
+**Definicao**
+
+Cadastro mestre que classifica formas logisticas como pallet, caixa, big bag, rack, tambor ou recipiente.
+
+### Instancia de Unidade Logistica
+
+**Definicao**
+
+Objeto operacional identificado no MES, como `UL-000123`.
+
+### UL explicita
+
+**Definicao**
+
+Modo em que a Unidade Logistica aparece claramente para o operador e e identificada durante a operacao.
+
+### UL implicita
+
+**Definicao**
+
+Modo em que o backend opera sobre Unidade Logistica, mas a interface oculta esse conceito em operacoes simples.
+
+### UL virtual
+
+**Definicao**
+
+Unidade Logistica conceitual utilizada quando o processo precisa de identidade operacional sem uma embalagem fisica destacada.
+
+### Local de Estoque
+
+**Definicao**
+
+Aggregate Root do dominio de Estoque que representa o endereco ou espaco fisico governado. Possui identidade, hierarquia, capacidade, restricoes, tipo, compatibilidade e estado operacional.
+
+**Modelo conceitual**
+
+- LocalDeEstoque = endereco fisico governado pelo dominio.
+- LocalizacaoEstoque = referencia de posicionamento atual da Unidade Logistica.
+
+**Referencias**
+
+- `../12 - Decision Log/DL-0024 - Local de Estoque como Aggregate Root.md`
+
+### Expectativa de Recebimento
+
+**Definicao**
+
+Previsao de algo que o dominio espera receber, independente de origem tecnologica e independente do Recebimento.
+
+**Referencias**
+
+- `../12 - Decision Log/DL-0027 - Expectativa de Recebimento e Recebimento Operacional.md`
+
+### Origem Operacional
+
+**Definicao**
+
+Classificacao da origem de uma expectativa ou recebimento, como Compra, Transferencia, Industrializacao, Devolucao, Ajuste, Avulso ou Outro Sistema.
+
+### Recebimento
+
+**Definicao**
+
+Processo operacional de entrada fisica, conferencia, divergencia, custodia inicial, criacao ou associacao de UL e destinacao.
+
+**Nao significa**
+
+Nao e documento de ERP.
+
+### Custodia
+
+**Definicao**
+
+Responsabilidade operacional temporaria sobre uma Unidade Logistica ou material em determinado momento do processo.
+
+### Disponibilidade
+
+**Definicao**
+
+Condicao derivada que indica se quantidade fisica pode ser utilizada, reservada, consumida ou movimentada conforme regras do dominio.
+
+### Reserva de Estoque
+
+**Definicao**
+
+Aggregate Root que coordena alocacao de estoque para atendimento de demanda.
+
+**Referencias**
+
+- `../12 - Decision Log/DL-0026 - Reserva de Estoque Disponibilidade e Concorrencia.md`
+
+### Alocacao
+
+**Definicao**
+
+Associacao de quantidade disponivel de uma ou mais ULs a uma demanda ou reserva.
+
+### Quantidade fisica
+
+**Definicao**
+
+Quantidade material real contida ou representada por uma Unidade Logistica.
+
+### Quantidade disponivel
+
+**Definicao**
+
+Quantidade fisica que pode ser usada apos descontar bloqueios, reservas, movimentacoes e consumos conforme politica.
+
+### Quantidade reservada
+
+**Definicao**
+
+Quantidade alocada para uma demanda especifica.
+
+### Quantidade bloqueada
+
+**Definicao**
+
+Quantidade impedida de uso por qualidade, divergencia, decisao operacional ou regra configurada.
+
+### Quantidade em transito
+
+**Definicao**
+
+Quantidade retirada da origem e ainda nao confirmada no destino.
+
+### Quantidade em consumo
+
+**Definicao**
+
+Quantidade comprometida por processo de consumo ainda nao concluido ou conciliado.
+
+### Politica de Contagem
+
+**Definicao**
+
+Aggregate Root configuravel que define regras para gerar inventarios ou tarefas de contagem. Possui identidade, versao, vigencia, estado ativo ou inativo, criterios de selecao, frequencia, escopo, tolerancias, regras de recontagem, regras de aprovacao e ciclo de vida proprio.
+
+**Referencias**
+
+- `../12 - Decision Log/DL-0028 - Politica de Contagem Inventario e Ajuste de Estoque.md`
+
+### Inventario
+
+**Definicao**
+
+Execucao operacional de uma contagem, com escopo, tarefas, responsaveis, resultados, divergencias, recontagens, reconciliacao e encerramento.
+
+### Tarefa de Contagem
+
+**Definicao**
+
+Unidade interna de trabalho do Inventario para orientar e registrar uma contagem especifica.
+
+**Nao significa**
+
+Na primeira versao, nao e Aggregate Root proprio.
+
+### Contagem
+
+**Definicao**
+
+Registro do que foi encontrado fisicamente durante inventario.
+
+### Recontagem
+
+**Definicao**
+
+Nova contagem solicitada para confirmar ou revisar divergencia.
+
+### Reconciliacao
+
+**Definicao**
+
+Comparacao entre contagem fisica e estoque virtual projetado.
+
+### Ajuste de Estoque
+
+**Definicao**
+
+Operacao formal, autorizada e auditavel que altera o estoque virtual apos divergencia validada.
+
+### Projecao de Saldo
+
+**Definicao**
+
+Visao derivada de fatos operacionais confirmados, usada para consulta, disponibilidade e relatorios.
+
+**Nao significa**
+
+Nao e fonte primaria para alteracoes operacionais.
+
+### Evento de Dominio
+
+**Definicao**
+
+Fato relevante ocorrido no dominio, registrado no passado. Nao deve ser confundido com comando, estado do agregado ou alerta operacional derivado.
+
+### Alerta Operacional Derivado
+
+**Definicao**
+
+Sinal produzido por monitoramento temporal, projecao ou servico operacional. Pode estar correlacionado a um Aggregate Root, mas nao representa necessariamente uma transicao direta dele.
+
+**Exemplos**
+
+- LimiteDeTempoDaMovimentacaoAproximado.
+- AtrasoDeMovimentacaoDetectado.
+
+**Referencias**
+
+- `../15 - Architecture Sessions/AS-0004 - Arquitetura do Dominio de Estoque.md`
+- `../12 - Decision Log/DL-0025 - Movimentacao de Estoque como Processo Operacional.md`
+- `../12 - Decision Log/DL-0029 - Autoridade de Dominio Auditoria e Eventos.md`
+### Causacao
+
+**Definicao**
+
+Relacao que identifica qual comando, evento ou operacao causou outro evento.
+
+### Concorrencia otimista
+
+**Definicao**
+
+Mecanismo de consistencia que detecta alteracoes concorrentes antes de confirmar uma operacao critica.
+
+### Aderencia fisico versus virtual
+
+**Definicao**
+
+Principio segundo o qual o estoque virtual deve refletir os fatos fisicos confirmados da operacao.
+
+### Homogeneidade
+
+**Definicao**
+
+Regra que define quais atributos podem coexistir dentro de uma Unidade Logistica.
+
+### Hierarquia de UL
+
+**Definicao**
+
+Estrutura opcional em que uma Unidade Logistica pode conter outras ULs, como pallet, caixa e bandeja.
+
+### Genealogia de UL
+
+**Definicao**
+
+Historico de origem, agrupamento, desagrupamento, divisao e consolidacao de Unidades Logisticas.
+
 ## 5. Relacoes entre os Principais Conceitos
 
 ```text
@@ -588,6 +882,7 @@ Estrutura de Produto
 - `../15 - Architecture Sessions/AS-0001 - Arquitetura de Enderecamento e Localizacao de Estoque.md`
 - `../15 - Architecture Sessions/AS-0002 - Movimentacoes de Estoque e Operacao Assistida.md`
 - `../15 - Architecture Sessions/AS-0003 - Arquitetura de Integracao Sincronizacao Governanca e Eventos.md`
+- `../15 - Architecture Sessions/AS-0004 - Arquitetura do Dominio de Estoque.md`
 
 ### Decision Logs
 
@@ -612,4 +907,11 @@ Estrutura de Produto
 - `../12 - Decision Log/DL-0019 - Arquitetura Orientada a Eventos.md`
 - `../12 - Decision Log/DL-0020 - Resiliencia Idempotencia Auditoria e Reprocessamento.md`
 - `../12 - Decision Log/DL-0021 - Limites Fiscais do Produto.md`
-
+- `../12 - Decision Log/DL-0022 - Estoque como Dominio e Saldo como Projecao.md`
+- `../12 - Decision Log/DL-0023 - Unidade Logistica como Agregado Fisico.md`
+- `../12 - Decision Log/DL-0024 - Local de Estoque como Aggregate Root.md`
+- `../12 - Decision Log/DL-0025 - Movimentacao de Estoque como Processo Operacional.md`
+- `../12 - Decision Log/DL-0026 - Reserva de Estoque Disponibilidade e Concorrencia.md`
+- `../12 - Decision Log/DL-0027 - Expectativa de Recebimento e Recebimento Operacional.md`
+- `../12 - Decision Log/DL-0028 - Politica de Contagem Inventario e Ajuste de Estoque.md`
+- `../12 - Decision Log/DL-0029 - Autoridade de Dominio Auditoria e Eventos.md`

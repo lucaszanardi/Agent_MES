@@ -19,12 +19,31 @@ O roadmap:
 | AS-0001 | Arquitetura de Enderecamento e Localizacao de Estoque | Concluida | DL-0001 a DL-0005 |
 | AS-0002 | Movimentacoes de Estoque e Operacao Assistida | Concluida | DL-0006 a DL-0011 |
 | AS-0003 | Arquitetura de Integracao, Sincronizacao, Governanca e Eventos | Concluida | DL-0012 a DL-0021 |
+| AS-0004 | Arquitetura do Dominio de Estoque | Concluida | DL-0022 a DL-0029 |
 
-Proxima discussao planejada:
+Proxima etapa planejada:
 
-AS-0004 - Recebimento de Materiais.
+Revisao humana da AS-0004 e dos Decision Logs derivados antes de iniciar qualquer implementacao.
 
-Nao existe arquivo formal de AS-0004 neste momento.
+## Sequencia Aprovada
+
+1. Finalizar AS-0004 - Estoque.
+2. Implementar uma primeira vertical funcional do estoque.
+3. Corrigir e evoluir autenticacao e experiencia de login.
+4. Iniciar Domain Discovery de Gestao da Producao.
+5. Modelar ordens, operacoes, recursos e sequenciamento.
+6. Discutir necessidades de materiais e MRP.
+7. Modelar Apontamento de Producao.
+8. Integrar consumo, producao, perdas e estoque.
+
+A implementacao somente podera iniciar apos:
+
+- revisao da AS-0004;
+- aprovacao dos Decision Logs;
+- validacao do Project Book;
+- definicao da primeira vertical funcional;
+- arquitetura tecnica de backend;
+- arquitetura tecnica de frontend.
 
 ## Onda 1 - Arquitetura Base
 
@@ -95,174 +114,133 @@ Referencia:
 
 - `../15 - Architecture Sessions/AS-0003 - Arquitetura de Integracao Sincronizacao Governanca e Eventos.md`
 
-## Onda 2 - Execucao Logistica
+### AS-0004 - Arquitetura do Dominio de Estoque
 
-### AS-0004 - Recebimento de Materiais
+Status: Concluida.
 
-Status: Planejada para discussao.
+Principais resultados:
 
-Escopo preliminar, sem decisao arquitetural:
+- Estoque como dominio, nao Aggregate Root;
+- Aggregate Roots iniciais do dominio de Estoque;
+- Unidade Logistica como principal agregado fisico;
+- homogeneidade e hierarquia de UL governadas por politicas configuraveis;
+- Local de Estoque como Aggregate Root;
+- Movimentacao de Estoque como processo operacional com inicio, transito e fim;
+- Reserva de Estoque como Aggregate Root proprio;
+- Expectativa de Recebimento independente do Recebimento;
+- Recebimento como processo operacional;
+- Politica de Contagem e Inventario como agregados distintos;
+- separacao entre contagem, reconciliacao e ajuste;
+- ajustes formais, autorizados e auditaveis;
+- permissao de usuario separada da autoridade de dominio;
+- eventos com envelope comum e versionamento;
+- saldo como projecao derivada.
 
-- expectativa de recebimento;
-- recebimento previsto e nao previsto;
-- conferencia documental operacional;
-- conferencia fisica;
-- divergencia;
-- lote;
-- validade;
-- serial;
-- embalagem;
-- unidade logistica;
-- staging;
-- quarentena;
-- inspecao de recebimento;
-- liberacao;
-- rejeicao;
-- devolucao;
-- geracao de tarefas de armazenagem;
-- integracao com pedido de compra;
-- referencia de nota fiscal;
-- jornada do material recebido.
+Referencia:
 
-O escopo acima e apenas preliminar e devera ser validado durante a discussao da AS-0004.
+- `../15 - Architecture Sessions/AS-0004 - Arquitetura do Dominio de Estoque.md`
 
-### AS-0005 - Saldos, Disponibilidade, Reservas e Bloqueios
+## Historico de evolucao do roadmap
 
-Status: Planejada.
+A versao anterior do roadmap previa a AS-0004 com foco em Recebimento de Materiais e previa sessoes posteriores separadas para saldos, inventario e abastecimento.
 
-Escopo preliminar:
+Durante o Domain Discovery, foi identificada forte dependencia e coesao entre recebimento, saldos, unidades logisticas, locais, movimentacoes, reservas, inventario, ajustes e rastreabilidade. Por isso, esses conceitos foram consolidados na AS-0004 - Arquitetura do Dominio de Estoque.
 
-- saldo fisico;
-- saldo logico;
-- saldo disponivel;
-- saldo reservado;
-- saldo bloqueado;
-- saldo em transito;
-- disponibilidade por lote;
-- disponibilidade por localizacao;
+Essa consolidacao substituiu o planejamento anterior. O roadmap vigente representa a sequencia aprovada apos essa revisao arquitetural e preserva a rastreabilidade da evolucao do desenho do dominio, sem reintroduzir os itens obsoletos como atividades futuras ativas.
+## Onda 2 - Primeira Vertical Funcional de Estoque
+
+Status: Planejada apos revisao humana da AS-0004 e dos DLs derivados.
+
+Escopo devera ser definido em etapa propria, antes da implementacao.
+
+Temas candidatos, sem decisao de implementacao nesta documentacao:
+
+- Unidade Logistica;
+- Local de Estoque;
+- recebimento operacional;
+- movimentacao com inicio, transito e fim;
+- projecoes de saldo;
 - reservas;
-- compromissos;
-- bloqueios;
-- conciliacao.
+- inventario e ajuste formal;
+- auditoria e rastreabilidade.
 
-### AS-0006 - Inventario e Ajustes
-
-Status: Planejada.
-
-Escopo preliminar:
-
-- inventario geral;
-- inventario rotativo;
-- contagem cega;
-- reconferencia;
-- divergencias;
-- ajustes;
-- aprovacao;
-- trilha de auditoria;
-- bloqueio durante inventario.
-
-### AS-0007 - Abastecimento, Consumo e Retorno da Producao
+## Onda 3 - Autenticacao e Experiencia de Login
 
 Status: Planejada.
 
-Escopo preliminar:
+Temas futuros:
 
-- solicitacao de material;
-- separacao;
-- abastecimento;
-- entrega na linha;
-- consumo;
-- consumo automatico e manual;
-- retorno;
-- sobra;
-- perda;
-- material em processo;
-- devolucao ao estoque.
+- revisar autenticacao existente;
+- melhorar experiencia de login;
+- preservar autorizacao por perfis e permissoes;
+- alinhar permissoes operacionais com autoridade de dominio.
 
-## Onda 3 - Engenharia e Planejamento Industrial
+## Onda 4 - Gestao da Producao
 
-Temas futuros sem numeracao definitiva:
+Status: Planejada para Domain Discovery.
 
-- engenharia de produto;
-- estruturas e revisoes;
-- roteiros;
-- recursos;
-- centros de trabalho;
-- calendarios;
-- capacidade;
-- MRP;
-- necessidades de materiais;
-- planejamento;
-- sequenciamento.
-
-## Onda 4 - Execucao da Producao
-
-Temas futuros sem numeracao definitiva:
+Temas futuros:
 
 - ordens de producao;
+- operacoes;
+- recursos;
+- centros de trabalho;
+- sequenciamento;
 - demandas;
 - alocacoes;
 - campanhas de producao;
-- operacoes;
-- execucoes;
-- apontamentos;
 - turnos;
 - equipes;
-- passagem de turno;
+- passagem de turno.
+
+## Onda 5 - Necessidades de Materiais e MRP
+
+Status: Planejada.
+
+Temas futuros:
+
+- necessidades de materiais;
+- planejamento;
+- MRP;
+- reservas para producao;
+- disponibilidade real;
+- consumo previsto;
+- integracao com estoque e producao.
+
+## Onda 6 - Apontamento de Producao
+
+Status: Planejada.
+
+Temas futuros:
+
+- execucao de operacao;
+- apontamentos;
+- consumo;
+- quantidade boa;
 - perdas;
 - refugos;
+- paradas;
 - retrabalho;
 - lote produzido;
 - sublotes;
-- rateios.
+- integracao com estoque.
 
-## Onda 5 - Qualidade
+## Onda 7 - Qualidade, Desempenho e Inteligencia Industrial
 
-Temas futuros sem numeracao definitiva:
+Status: Planejada sem numeracao definitiva.
+
+Temas futuros:
 
 - inspecao de recebimento;
 - inspecao em processo;
 - inspecao final;
-- plano de inspecao;
-- amostragem;
 - nao conformidade;
 - bloqueio;
 - liberacao;
-- desvio;
-- retrabalho;
-- descarte;
-- rastreabilidade da qualidade.
-
-## Onda 6 - Manutencao e Desempenho
-
-Temas futuros sem numeracao definitiva:
-
-- eventos de maquina;
-- paradas;
-- motivos de parada;
-- manutencao corretiva;
-- manutencao preventiva;
-- manutencao preditiva;
-- disponibilidade;
-- performance;
-- qualidade;
 - OEE;
-- MTBF;
-- MTTR.
-
-## Onda 7 - Analytics e Inteligencia Industrial
-
-Temas futuros sem numeracao definitiva:
-
-- dashboards;
 - indicadores;
-- series temporais;
-- data lake;
+- dashboards;
 - analytics;
-- previsao;
-- deteccao de anomalias;
-- otimizacao;
-- visao computacional;
 - IA;
 - agentes industriais.
 
@@ -271,12 +249,29 @@ Esses itens dependerao da maturidade e qualidade dos dados operacionais anterior
 ## Dependencias Principais
 
 ```text
-Enderecamento
--> Movimentacoes
--> Recebimento
--> Saldos e disponibilidade
--> Inventario
+Enderecamento e Local de Estoque
+-> Unidade Logistica
+-> Movimentacao
+-> Saldo projetado
+-> Disponibilidade
+-> Reserva
 -> Abastecimento da producao
+```
+
+```text
+Recebimento
+-> Unidade Logistica
+-> Custodia
+-> Disponibilidade
+-> Consumo
+```
+
+```text
+Inventario
+-> Contagem
+-> Reconciliacao
+-> Ajuste formal
+-> Projecoes de saldo
 ```
 
 ```text
@@ -285,23 +280,19 @@ Integracao e sincronizacao
 ```
 
 ```text
-Engenharia e roteiros
--> planejamento
+Gestao da Producao
 -> ordens
--> execucao
+-> operacoes
+-> recursos
+-> sequenciamento
 -> apontamentos
--> OEE e analytics
-```
-
-```text
-Qualidade
--> transversal a recebimento, estoque, producao e expedicao
+-> consumo, producao, perdas e estoque
 ```
 
 ## Limites
 
 - Este roadmap nao define cronograma com datas.
 - Este roadmap nao estima esforco.
-- Este roadmap nao reserva numeracao definitiva para temas posteriores a AS-0007.
 - Este roadmap nao cria novas decisoes arquiteturais.
 - Este roadmap nao autoriza implementacao.
+- Este roadmap nao substitui Architecture Sessions ou Decision Logs.

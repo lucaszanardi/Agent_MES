@@ -35,6 +35,14 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 | DL-0019 | Arquitetura Orientada a Eventos | Aprovado | AS-0003 |
 | DL-0020 | Resiliencia, Idempotencia, Auditoria e Reprocessamento | Aprovado | AS-0003 |
 | DL-0021 | Limites Fiscais do Produto | Aprovado | AS-0003 |
+| DL-0022 | Estoque como Dominio e Saldo como Projecao | Aprovado | AS-0004 |
+| DL-0023 | Unidade Logistica como Agregado Fisico | Aprovado | AS-0004 |
+| DL-0024 | Local de Estoque como Aggregate Root | Aprovado | AS-0004 |
+| DL-0025 | Movimentacao de Estoque como Processo Operacional | Aprovado | AS-0004 |
+| DL-0026 | Reserva de Estoque Disponibilidade e Concorrencia | Aprovado | AS-0004 |
+| DL-0027 | Expectativa de Recebimento e Recebimento Operacional | Aprovado | AS-0004 |
+| DL-0028 | Politica de Contagem Inventario e Ajuste de Estoque | Aprovado | AS-0004 |
+| DL-0029 | Autoridade de Dominio Auditoria e Eventos | Aprovado | AS-0004 |
 
 ## Arquivos
 
@@ -59,3 +67,11 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 - `DL-0019 - Arquitetura Orientada a Eventos.md`
 - `DL-0020 - Resiliencia Idempotencia Auditoria e Reprocessamento.md`
 - `DL-0021 - Limites Fiscais do Produto.md`
+- `DL-0022 - Estoque como Dominio e Saldo como Projecao.md`
+- `DL-0023 - Unidade Logistica como Agregado Fisico.md`
+- `DL-0024 - Local de Estoque como Aggregate Root.md`
+- `DL-0025 - Movimentacao de Estoque como Processo Operacional.md`
+- `DL-0026 - Reserva de Estoque Disponibilidade e Concorrencia.md`
+- `DL-0027 - Expectativa de Recebimento e Recebimento Operacional.md`
+- `DL-0028 - Politica de Contagem Inventario e Ajuste de Estoque.md`
+- `DL-0029 - Autoridade de Dominio Auditoria e Eventos.md`

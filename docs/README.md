@@ -35,9 +35,8 @@ Este diretorio concentra a documentacao oficial do produto MES/MOM.
 | AS-0001 | Arquitetura de Enderecamento e Localizacao de Estoque | Concluida | DL-0001 a DL-0005 |
 | AS-0002 | Movimentacoes de Estoque e Operacao Assistida | Concluida | DL-0006 a DL-0011 |
 | AS-0003 | Arquitetura de Integracao, Sincronizacao, Governanca e Eventos | Concluida | DL-0012 a DL-0021 |
+| AS-0004 | Arquitetura do Dominio de Estoque | Concluida | DL-0022 a DL-0029 |
 
-Proxima discussao planejada:
+Proxima etapa planejada:
 
-AS-0004 - Recebimento de Materiais.
-
-Nao existe arquivo formal de AS-0004 neste momento.
+Revisao humana da AS-0004 e dos Decision Logs derivados antes de iniciar qualquer implementacao.
