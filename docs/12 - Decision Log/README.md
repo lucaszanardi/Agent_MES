@@ -43,6 +43,18 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 | DL-0027 | Expectativa de Recebimento e Recebimento Operacional | Aprovado | AS-0004 |
 | DL-0028 | Politica de Contagem Inventario e Ajuste de Estoque | Aprovado | AS-0004 |
 | DL-0029 | Autoridade de Dominio Auditoria e Eventos | Aprovado | AS-0004 |
+| DL-0030 | Primeira Vertical Funcional do Dominio de Estoque | Aprovado | AS-0005 |
+| DL-0031 | Codigo Legado de Estoque como Insumo de Implementacao | Aprovado | AS-0005 |
+| DL-0032 | Definition of Ready para Retomada da Codificacao | Aprovado | AS-0005 |
+| DL-0033 | Estrategia de Idempotencia dos Comandos da Primeira Vertical de Estoque | Aprovado | AS-0007 |
+| DL-0034 | Concorrencia Otimista e Exclusividade de Movimentacao de Unidade Logistica | Aprovado | AS-0007 |
+| DL-0035 | Fronteira Transacional da Confirmacao de Movimentacao de Estoque | Aprovado | AS-0007 |
+| DL-0036 | Transactional Outbox para Eventos da Primeira Vertical de Estoque | Aprovado | AS-0007 |
+| DL-0037 | Estrategia de Coexistencia com o Legado de Estoque | Aprovado | AS-0007 |
+| DL-0038 | Persistencia de Local de Estoque e Relacao com Legado | Aprovado | AS-0007 |
+| DL-0039 | Exclusividade Ativa por Reserva Transacional de Unidade Logistica | Aprovado | AS-0007 |
+| DL-0040 | Identificadores e Retencao Operacional da Persistencia de Estoque | Aprovado com ressalvas operacionais | AS-0007 |
+| DL-0041 | Transicao do Legado de Localizacao para Local de Estoque MES | Aprovado | AS-0007 |
 
 ## Arquivos
 
@@ -75,3 +87,16 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 - `DL-0027 - Expectativa de Recebimento e Recebimento Operacional.md`
 - `DL-0028 - Politica de Contagem Inventario e Ajuste de Estoque.md`
 - `DL-0029 - Autoridade de Dominio Auditoria e Eventos.md`
+- `DL-0030 - Primeira Vertical Funcional do Dominio de Estoque.md`
+- `DL-0031 - Codigo Legado de Estoque como Insumo de Implementacao.md`
+- `DL-0032 - Definition of Ready para Retomada da Codificacao.md`
+- `DL-0033 - Estrategia de Idempotencia dos Comandos da Primeira Vertical de Estoque.md`
+- `DL-0034 - Concorrencia Otimista e Exclusividade de Movimentacao de Unidade Logistica.md`
+- `DL-0035 - Fronteira Transacional da Confirmacao de Movimentacao de Estoque.md`
+- `DL-0036 - Transactional Outbox para Eventos da Primeira Vertical de Estoque.md`
+- `DL-0037 - Estrategia de Coexistencia com o Legado de Estoque.md`
+- `DL-0038 - Persistencia de Local de Estoque e Relacao com Legado.md`
+- `DL-0039 - Exclusividade Ativa por Reserva Transacional de Unidade Logistica.md`
+- `DL-0040 - Identificadores e Retencao Operacional da Persistencia de Estoque.md`
+- `DL-0041 - Transicao do Legado de Localizacao para Local de Estoque MES.md`
+

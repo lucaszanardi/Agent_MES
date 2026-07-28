@@ -36,7 +36,11 @@ Este diretorio concentra a documentacao oficial do produto MES/MOM.
 | AS-0002 | Movimentacoes de Estoque e Operacao Assistida | Concluida | DL-0006 a DL-0011 |
 | AS-0003 | Arquitetura de Integracao, Sincronizacao, Governanca e Eventos | Concluida | DL-0012 a DL-0021 |
 | AS-0004 | Arquitetura do Dominio de Estoque | Concluida | DL-0022 a DL-0029 |
+| AS-0005 | Arquitetura da Primeira Vertical Funcional do Dominio de Estoque | Concluida | DL-0030 a DL-0032 |
+| AS-0006 | Avaliacao de Prontidao Tecnica para Implementacao da Primeira Vertical de Estoque | Concluida | Nao gera DL |
+| AS-0007 | Arquitetura Tecnica da Primeira Vertical Funcional de Estoque | Concluida | DL-0033 a DL-0037 |
 
 Proxima etapa planejada:
 
-Revisao humana da AS-0004 e dos Decision Logs derivados antes de iniciar qualquer implementacao.
+Implementar o primeiro incremento de codigo recomendado pela AS-0007: nucleo de dominio de UnidadeLogistica e MovimentacaoDeEstoque com testes unitarios, sem API publica e sem migrations.
+

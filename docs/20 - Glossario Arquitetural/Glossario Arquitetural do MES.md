@@ -546,6 +546,20 @@ Modo em que parte dos dados nasce no MES e parte em sistemas externos.
 
 ## 4.1 Termos do Dominio de Estoque
 
+### Primeira Vertical Funcional de Estoque
+
+**Definicao**
+
+Recorte incremental definido pela AS-0005 para validar ponta a ponta Local de Estoque, Unidade Logistica, Movimentacao, Confirmacao, Consulta e Historico antes da retomada da codificacao.
+
+**Nao significa**
+
+Nao entrega todo o Dominio de Estoque e nao inclui automaticamente recebimento, reserva, inventario, ajuste, MRP ou apontamento.
+
+**Referencias**
+
+- `../15 - Architecture Sessions/AS-0005 - Arquitetura da Primeira Vertical Funcional do Dominio de Estoque.md`
+- `../12 - Decision Log/DL-0030 - Primeira Vertical Funcional do Dominio de Estoque.md`
 ### Dominio de Estoque
 
 **Definicao**
@@ -559,6 +573,7 @@ Nao e um Aggregate Root chamado Estoque.
 **Referencias**
 
 - `../15 - Architecture Sessions/AS-0004 - Arquitetura do Dominio de Estoque.md`
+- `../15 - Architecture Sessions/AS-0005 - Arquitetura da Primeira Vertical Funcional do Dominio de Estoque.md`
 - `../12 - Decision Log/DL-0022 - Estoque como Dominio e Saldo como Projecao.md`
 
 ### Aggregate Root
@@ -796,8 +811,11 @@ Sinal produzido por monitoramento temporal, projecao ou servico operacional. Pod
 **Referencias**
 
 - `../15 - Architecture Sessions/AS-0004 - Arquitetura do Dominio de Estoque.md`
+- `../15 - Architecture Sessions/AS-0005 - Arquitetura da Primeira Vertical Funcional do Dominio de Estoque.md`
 - `../12 - Decision Log/DL-0025 - Movimentacao de Estoque como Processo Operacional.md`
 - `../12 - Decision Log/DL-0029 - Autoridade de Dominio Auditoria e Eventos.md`
+- `../12 - Decision Log/DL-0030 - Primeira Vertical Funcional do Dominio de Estoque.md`
+
 ### Causacao
 
 **Definicao**
@@ -883,6 +901,7 @@ Estrutura de Produto
 - `../15 - Architecture Sessions/AS-0002 - Movimentacoes de Estoque e Operacao Assistida.md`
 - `../15 - Architecture Sessions/AS-0003 - Arquitetura de Integracao Sincronizacao Governanca e Eventos.md`
 - `../15 - Architecture Sessions/AS-0004 - Arquitetura do Dominio de Estoque.md`
+- `../15 - Architecture Sessions/AS-0005 - Arquitetura da Primeira Vertical Funcional do Dominio de Estoque.md`
 
 ### Decision Logs
 
@@ -915,3 +934,50 @@ Estrutura de Produto
 - `../12 - Decision Log/DL-0027 - Expectativa de Recebimento e Recebimento Operacional.md`
 - `../12 - Decision Log/DL-0028 - Politica de Contagem Inventario e Ajuste de Estoque.md`
 - `../12 - Decision Log/DL-0029 - Autoridade de Dominio Auditoria e Eventos.md`
+- `../12 - Decision Log/DL-0030 - Primeira Vertical Funcional do Dominio de Estoque.md`
+- `../12 - Decision Log/DL-0031 - Codigo Legado de Estoque como Insumo de Implementacao.md`
+- `../12 - Decision Log/DL-0032 - Definition of Ready para Retomada da Codificacao.md`
+
+
+### Transactional Outbox
+
+**Definicao**
+
+Padrao em que eventos de dominio sao gravados na mesma transacao local da alteracao do dominio e publicados posteriormente por processo separado.
+
+**Nao significa**
+
+Nao garante entrega exactly once e nao substitui idempotencia dos consumidores.
+
+**Referencias**
+
+- `../12 - Decision Log/DL-0036 - Transactional Outbox para Eventos da Primeira Vertical de Estoque.md`
+- `../15 - Architecture Sessions/AS-0007 - Arquitetura Tecnica da Primeira Vertical Funcional de Estoque.md`
+
+### Idempotency Key
+
+**Definicao**
+
+Chave enviada em comandos mutaveis para impedir que repeticoes do mesmo comando produzam efeitos duplicados.
+
+**Nao significa**
+
+Nao e correlation ID; a correlation ID rastreia uma jornada, enquanto a Idempotency Key identifica uma tentativa logica de comando.
+
+**Referencias**
+
+- `../12 - Decision Log/DL-0033 - Estrategia de Idempotencia dos Comandos da Primeira Vertical de Estoque.md`
+
+### Strangler Pattern
+
+**Definicao**
+
+Estrategia incremental para introduzir novo dominio ao lado do legado, encapsulando e substituindo fluxos antigos gradualmente.
+
+**Nao significa**
+
+Nao autoriza big bang nem escrita dupla nao transacional.
+
+**Referencias**
+
+- `../12 - Decision Log/DL-0037 - Estrategia de Coexistencia com o Legado de Estoque.md`

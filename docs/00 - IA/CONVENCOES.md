@@ -1,4 +1,4 @@
-﻿# Convenções Observadas no Código
+# Convenções Observadas no Código
 
 Este documento registra apenas padrões realmente observados no código em 2026-07-14. Divergências foram preservadas como divergências; nada aqui transforma padrões inconsistentes em regra oficial.
 
@@ -17,7 +17,7 @@ Legenda: **Confirmado** = observado diretamente; **Provável** = inferido por re
 | DbSets/tabelas com prefixo `C` em muitos casos | `BACKEND/PRPA/App.Infra.Data/Context/ProjetoContext.cs` | `CPRODUTO`, `CALMOXARIFADO`, `CMENU` | Confirmado |
 | Frontend usa pastas e classes em minúsculo/concatenação para várias features | `FRONTEND/src/app/application/cadastro` | `almoxarifado`, `listalmoxarifado`, `cadalmoxarifado` | Confirmado |
 | Divergência em nomes frontend/backend | `FRONTEND/.../roteiro-producao.service.ts`, `BACKEND/.../RoteiroProducaoController.cs` | endpoint `roteiros-producao` e rota `RoteiroProducao` coexistem | Confirmado |
-| Divergência ortográfica | `BACKEND/PRPA/App.Infra.Data/Repoository` | pasta `Repoository` | Confirmado |
+| Pasta de repositories | `BACKEND/PRPA/App.Infra.Data/Repository` | pasta `Repository` padronizada | Confirmado |
 
 ## Organização de pastas
 
@@ -77,8 +77,8 @@ Legenda: **Confirmado** = observado diretamente; **Provável** = inferido por re
 
 | Padrão observado | Caminho | Exemplo | Classificação |
 |---|---|---|---|
-| Repository genérico via EF Core | `BACKEND/PRPA/App.Infra.Data/Repoository/BaseRepository.cs` | `_dbContext.Set<T>()` | Confirmado |
-| Repositories específicos herdam genérico | `BACKEND/PRPA/App.Infra.Data/Repoository/*Repository.cs` | `AlmoxarifadoRepository : BaseRepository<Almoxarifado>` | Confirmado |
+| Repository genérico via EF Core | `BACKEND/PRPA/App.Infra.Data/Repository/BaseRepository.cs` | `_dbContext.Set<T>()` | Confirmado |
+| Repositories específicos herdam genérico | `BACKEND/PRPA/App.Infra.Data/Repository/*Repository.cs` | `AlmoxarifadoRepository : BaseRepository<Almoxarifado>` | Confirmado |
 | Interfaces específicas herdam `IRepository<TEntity>` | `BACKEND/PRPA/App.Domain/Interfaces/Repositories` | `IAlmoxarifadoRepository` | Confirmado |
 | Atualização marca entidade como modified | `BaseRepository.cs` | `_dbContext.Entry(entity).State = EntityState.Modified` | Confirmado |
 | TODO em atualização de dependências | `BaseRepository.cs` | comentário sobre função recursiva | Confirmado |

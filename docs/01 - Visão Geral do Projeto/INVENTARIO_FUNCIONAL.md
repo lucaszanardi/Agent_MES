@@ -276,7 +276,7 @@ Módulos mais maduros: autenticação, menu/permissões, cadastros de produto, c
 
 | Repositório | Evidências principais |
 |---|---|
-| BACKEND | `BACKEND/PRPA/PRPA/Controllers/*.cs`; `BACKEND/PRPA/PRPA/Program.cs`; `BACKEND/PRPA/App.Domain/Entities/**`; `BACKEND/PRPA/App.Service/DTOs/**`; `BACKEND/PRPA/App.Service/Services/*.cs`; `BACKEND/PRPA/App.Service/Validators/*.cs`; `BACKEND/PRPA/App.Infra.Data/Repoository/*.cs`; `BACKEND/PRPA/App.Infra.Data/Context/ProjetoContext.cs`; mappings e migrations; Identity; middleware; arquivos de e-mail/upload. |
+| BACKEND | `BACKEND/PRPA/PRPA/Controllers/*.cs`; `BACKEND/PRPA/PRPA/Program.cs`; `BACKEND/PRPA/App.Domain/Entities/**`; `BACKEND/PRPA/App.Service/DTOs/**`; `BACKEND/PRPA/App.Service/Services/*.cs`; `BACKEND/PRPA/App.Service/Validators/*.cs`; `BACKEND/PRPA/App.Infra.Data/Repository/*.cs`; `BACKEND/PRPA/App.Infra.Data/Context/ProjetoContext.cs`; mappings e migrations; Identity; middleware; arquivos de e-mail/upload. |
 | FRONTEND | `FRONTEND/src/app/app-routing.module.ts`; `application-routing.module.ts`; `cadastro-routing.module.ts`; `operacao-routing.module.ts`; `mes-routing.module.ts`; `FRONTEND/src/app/core/**`; `FRONTEND/src/app/application/cadastro/**`; `FRONTEND/src/app/application/operacao/**`; `FRONTEND/src/app/application/mes/**`; `FRONTEND/src/app/application/proposta/backlog/**`; `FRONTEND/src/environments/**`; `FRONTEND/proxy.conf.json`. |
 
 ## 17. Conclusão

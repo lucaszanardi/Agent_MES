@@ -1,4 +1,4 @@
-﻿# Estado Atual dos Repositórios BACKEND e FRONTEND
+# Estado Atual dos Repositórios BACKEND e FRONTEND
 
 Radiografia técnica realizada em 2026-07-14 a partir dos arquivos locais. Nenhum arquivo de `BACKEND` ou `FRONTEND` foi alterado.
 
@@ -56,7 +56,7 @@ Legenda: **Confirmado** = identificado diretamente em código/configuração; **
 | Item | Caminho | Classe, método ou componente | Classificação |
 |---|---|---|---|
 | Backend em camadas | `App.Domain`, `App.Service`, `App.Infra.Data`, `App.Infra.CrossCutting.IoC`, `PRPA` | separação por projeto | Confirmado |
-| Repository genérico | `BACKEND/PRPA/App.Infra.Data/Repoository/BaseRepository.cs` | `BaseRepository<T>` | Confirmado |
+| Repository genérico | `BACKEND/PRPA/App.Infra.Data/Repository/BaseRepository.cs` | `BaseRepository<T>` | Confirmado |
 | Service genérico | `BACKEND/PRPA/App.Service/Services/BaseServices.cs` | `BaseServices<T>` | Confirmado |
 | Unit of Work | `BACKEND/PRPA/App.Infra.Data/Persistence/UnitOfWork.cs` | `UnitOfWork`, `ExecuteAsync`, `SaveAsync`, `Rollback` | Confirmado |
 | DTO + AutoMapper | `BACKEND/PRPA/App.Service/DTOs`, `MappingProfile.cs` | mapeamentos DTO -> entidade | Confirmado |
@@ -110,8 +110,8 @@ Legenda: **Confirmado** = identificado diretamente em código/configuração; **
 | Roteiro com workflow | `BACKEND/PRPA/PRPA/Controllers/RoteiroProducaoController.cs` | `GetWorkflow`, `PutWorkflow`, `Validar`, `Ativar` | Confirmado |
 | Service genérico | `BACKEND/PRPA/App.Service/Services/BaseServices.cs` | `PostAsync`, `PutAsync`, `DeleteAsync`, `GetAllAsync`, `FindAsync` | Confirmado |
 | Services específicos | `BACKEND/PRPA/App.Service/Services/*Services.cs` | herdam `BaseServices<TEntity>` | Confirmado |
-| Repositório genérico | `BACKEND/PRPA/App.Infra.Data/Repoository/BaseRepository.cs` | `AddAsync`, `FindAsync`, `Update`, `Remove` | Confirmado |
-| Repositories específicos | `BACKEND/PRPA/App.Infra.Data/Repoository/*Repository.cs` | herdam `BaseRepository<TEntity>` | Confirmado |
+| Repositório genérico | `BACKEND/PRPA/App.Infra.Data/Repository/BaseRepository.cs` | `AddAsync`, `FindAsync`, `Update`, `Remove` | Confirmado |
+| Repositories específicos | `BACKEND/PRPA/App.Infra.Data/Repository/*Repository.cs` | herdam `BaseRepository<TEntity>` | Confirmado |
 | DI explícita | `BACKEND/PRPA/App.Infra.CrossCutting.IoC/NativeInjectorBootStrapper.cs` | registro manual de services/repositories | Confirmado |
 
 ## Configurações do Entity Framework
@@ -190,7 +190,7 @@ Legenda: **Confirmado** = identificado diretamente em código/configuração; **
 |---|---|---|---|
 | Dados/demo de Gantt | `FRONTEND/src/app/application/proposta/backlog/components/Gantdata.ts`, `data.ts` | dados estáticos | Confirmado |
 | Seed/dummy Identity | `BACKEND/PRPA/App.Infra.CrossCutting.Identity/Models/DummyData.cs` | usuário/role `techforyou` | Confirmado |
-| TODO técnico | `BACKEND/PRPA/App.Infra.Data/Repoository/BaseRepository.cs` | TODO para função recursiva em dependências | Confirmado |
+| TODO técnico | `BACKEND/PRPA/App.Infra.Data/Repository/BaseRepository.cs` | TODO para função recursiva em dependências | Confirmado |
 | TODO estoque reserva | `FRONTEND/src/app/application/operacao/reservaestoque/components/reservaestoque/reservaestoque.component.ts` | confirmar atualização de saldo | Confirmado |
 | TODO estoque bloqueio | `FRONTEND/src/app/application/operacao/bloqueioestoque/components/bloqueioestoque/bloqueioestoque.component.ts` | confirmar atualização de saldo | Confirmado |
 | TODO transferência | `FRONTEND/src/app/application/operacao/transferenciaestoque/components/transferenciaestoque/transferenciaestoque.component.ts` | confirmar movimentos origem/destino | Confirmado |
@@ -203,7 +203,7 @@ Legenda: **Confirmado** = identificado diretamente em código/configuração; **
 |---|---|---|---|
 | `AGENTS.md` sem conteúdo retornado | `AGENTS.md` | leitura integral sem texto | Confirmado |
 | Codificação com caracteres quebrados | `Program.cs`, `TokenInterceptor.ts`, comentários | textos como `Configuraï¿½ï¿½o` | Confirmado |
-| Pasta `Repoository` | `BACKEND/PRPA/App.Infra.Data/Repoository` | grafia divergente | Confirmado |
+| Pasta `Repository` | `BACKEND/PRPA/App.Infra.Data/Repository` | grafia padronizada | Confirmado |
 | Controllers protegidos na base, mas muitos endpoints anônimos | `BaseApiController.cs`, controllers CRUD | `[Authorize]` e `[AllowAnonymous]` coexistem | Confirmado |
 | Ambiente dev inconsistente com proxy | `environment.ts`, `proxy.conf.json`, `launchSettings.json` | `http://localhost:5046` vs `https://localhost:7137` | Confirmado |
 | Domínio/produto com nomes antigos | `angular.json`, `environment.ts`, `AuthController.cs` | `aguavivasports`, `Instituto Atlântico`, `techforyou` | Confirmado |
@@ -238,7 +238,7 @@ Legenda: **Confirmado** = identificado diretamente em código/configuração; **
 - `BACKEND/PRPA/PRPA/Controllers/AlmoxarifadoController.cs`
 - `BACKEND/PRPA/PRPA/Controllers/RoteiroProducaoController.cs`
 - `BACKEND/PRPA/App.Service/Services/BaseServices.cs`
-- `BACKEND/PRPA/App.Infra.Data/Repoository/BaseRepository.cs`
+- `BACKEND/PRPA/App.Infra.Data/Repository/BaseRepository.cs`
 - `FRONTEND/package.json`
 - `FRONTEND/angular.json`
 - `FRONTEND/proxy.conf.json`
@@ -254,6 +254,19 @@ Legenda: **Confirmado** = identificado diretamente em código/configuração; **
 - `FRONTEND/src/app/application/cadastro/almoxarifado/services/almoxarifado.service.ts`
 - `FRONTEND/src/app/application/cadastro/roteiroproducao/services/roteiro-producao.service.ts`
 
+## Pre-deploy da primeira vertical de Estoque em banco demo
+
+| Item | Evidencia | Classificacao |
+|---|---|---|
+| Reorganizacao backend | `BACKEND/PRPA/App.Infra.Data/Repository`, `Repository/Estoque`, `Persistence/Estoque`, `Mapping/Estoque`, `Context`, `Migrations` | Confirmado |
+| Migration revisada | `BACKEND/PRPA/App.Infra.Data/Migrations/20260727170707_CreateFirstEstoqueVertical.cs` | Confirmado |
+| Tabelas da migration isolada | `CIDEMPOTENCYREQUEST`, `CLOCALDEESTOQUE`, `COUTBOXMESSAGE`, `CUNIDADELOGISTICA`, `CMOVIMENTACAODEESTOQUE`, `CUNIDADELOGISTICAMOVEMENTRESERVATION` | Confirmado |
+| Toolchain EF local | `.config/dotnet-tools.json` com `dotnet-ef` 8.0.0; EF Core/Pomelo 8.0.0 | Confirmado |
+| Script SQL de inspecao | `BACKEND/PRPA/App.Infra.Data/.codex-build/CreateFirstEstoqueVertical.sql` e script auxiliar por predecessor imediato em `.codex-build` | Confirmado, nao versionado |
+| Banco demo hospedado | Variaveis `MES_DEMO_DB_*` e gate `MES_DEMO_CONFIRMATION` ausentes nesta execucao | Nao identificado |
+| Versao real do servidor | Inspecao remota nao executada por gate ausente | Nao identificado |
+| Backup/restauracao | Nao informado nesta execucao | Nao identificado |
+| Aplicacao da migration | `database update` nao executado; nenhum DDL remoto executado | Confirmado |
 ## Perguntas para validação humana
 
 - O `AGENTS.md` deveria estar vazio mesmo ou houve problema de codificação/conteúdo?

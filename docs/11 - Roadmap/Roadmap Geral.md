@@ -20,10 +20,13 @@ O roadmap:
 | AS-0002 | Movimentacoes de Estoque e Operacao Assistida | Concluida | DL-0006 a DL-0011 |
 | AS-0003 | Arquitetura de Integracao, Sincronizacao, Governanca e Eventos | Concluida | DL-0012 a DL-0021 |
 | AS-0004 | Arquitetura do Dominio de Estoque | Concluida | DL-0022 a DL-0029 |
+| AS-0005 | Arquitetura da Primeira Vertical Funcional do Dominio de Estoque | Concluida | DL-0030 a DL-0032 |
+| AS-0006 | Avaliacao de Prontidao Tecnica para Implementacao da Primeira Vertical de Estoque | Concluida | Nao gera DL |
+| AS-0007 | Arquitetura Tecnica da Primeira Vertical Funcional de Estoque | Concluida | DL-0033 a DL-0037 |
 
 Proxima etapa planejada:
 
-Revisao humana da AS-0004 e dos Decision Logs derivados antes de iniciar qualquer implementacao.
+Implementar o primeiro incremento de codigo recomendado pela AS-0007: nucleo de dominio de UnidadeLogistica e MovimentacaoDeEstoque com testes unitarios, sem API publica e sem migrations.
 
 ## Sequencia Aprovada
 
@@ -147,22 +150,37 @@ A versao anterior do roadmap previa a AS-0004 com foco em Recebimento de Materia
 Durante o Domain Discovery, foi identificada forte dependencia e coesao entre recebimento, saldos, unidades logisticas, locais, movimentacoes, reservas, inventario, ajustes e rastreabilidade. Por isso, esses conceitos foram consolidados na AS-0004 - Arquitetura do Dominio de Estoque.
 
 Essa consolidacao substituiu o planejamento anterior. O roadmap vigente representa a sequencia aprovada apos essa revisao arquitetural e preserva a rastreabilidade da evolucao do desenho do dominio, sem reintroduzir os itens obsoletos como atividades futuras ativas.
+
 ## Onda 2 - Primeira Vertical Funcional de Estoque
 
-Status: Planejada apos revisao humana da AS-0004 e dos DLs derivados.
+Status: Definida pela AS-0005, avaliada pela AS-0006 como `NOT READY`, detalhada pela AS-0007 como `READY WITH CONDITIONS` e consolidada pelos DL-0033 a DL-0037 como `READY` para iniciar o primeiro incremento de dominio.
 
-Escopo devera ser definido em etapa propria, antes da implementacao.
+Escopo definido pela AS-0005 como Local de Estoque -> Unidade Logistica -> Movimentacao -> Confirmacao -> Consulta -> Historico.
 
-Temas candidatos, sem decisao de implementacao nesta documentacao:
+Bloqueadores tecnicos registrados pela AS-0006:
 
-- Unidade Logistica;
-- Local de Estoque;
+- ausencia de `UnidadeLogistica` no codigo atual;
+- ausencia de `MovimentacaoDeEstoque` como Aggregate Root tecnico;
+- persistencia, idempotencia, eventos, autorizacao e testes ainda nao prontos;
+- necessidade de classificar o codigo legado conforme DL-0031 antes de iniciar implementacao.
+
+Arquitetura tecnica definida pela AS-0007:
+
+- primeira slice: movimentar uma unica Unidade Logistica de um Local de Estoque para outro;
+- comandos: criar, confirmar e cancelar movimentacao;
+- confirmacao com idempotencia, concorrencia otimista, historico, outbox e projecoes;
+- coexistencia incremental com `LocalizacaoEstoque`, `MovimentoEstoque`, `TransferenciaEstoque` e `SaldoEstoque`;
+- DL-0033 a DL-0037 consolidam idempotencia, concorrencia, fronteira transacional, outbox e coexistencia com legado;
+- primeiro incremento recomendado: nucleo de dominio de UnidadeLogistica e MovimentacaoDeEstoque com testes unitarios, sem API publica e sem migrations.
+
+Temas candidatos remanescentes, sem decisao de implementacao nesta documentacao:
+
 - recebimento operacional;
-- movimentacao com inicio, transito e fim;
-- projecoes de saldo;
 - reservas;
 - inventario e ajuste formal;
-- auditoria e rastreabilidade.
+- abastecimento da producao;
+- projecoes de saldo alem do recorte minimo;
+- auditoria e rastreabilidade alem do recorte minimo.
 
 ## Onda 3 - Autenticacao e Experiencia de Login
 
@@ -296,3 +314,5 @@ Gestao da Producao
 - Este roadmap nao cria novas decisoes arquiteturais.
 - Este roadmap nao autoriza implementacao.
 - Este roadmap nao substitui Architecture Sessions ou Decision Logs.
+
+

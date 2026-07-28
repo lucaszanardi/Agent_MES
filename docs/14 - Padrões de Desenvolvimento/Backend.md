@@ -1,4 +1,4 @@
-﻿# Backend
+# Backend
 
 Este documento registra apenas padroes realmente observados no codigo do BACKEND. Divergencias sao registradas como divergencias, nao como regras oficiais.
 
@@ -22,7 +22,7 @@ Legenda: **Confirmado** = encontrado em arquivo de codigo; **Provavel** = indica
 | Solucao separada por camadas `App.Domain`, `App.Service`, `App.Infra.Data`, `App.Infra.CrossCutting.IoC` e projeto API `PRPA`. | Estrutura `BACKEND/PRPA/*`; arquivos `.csproj` correspondentes | Confirmado |
 | Entidades ficam em `App.Domain/Entities`, com subpastas `PRPA` e `Config`. | `BACKEND/PRPA/App.Domain/Entities/PRPA/*.cs`; `BACKEND/PRPA/App.Domain/Entities/Config/*.cs` | Confirmado |
 | Mapeamentos EF ficam em `App.Infra.Data/Map/PRPA` e usam classes `*Config`. | `BACKEND/PRPA/App.Infra.Data/Map/PRPA/*Config.cs` | Confirmado |
-| Repositorios ficam em pasta escrita como `Repoository`. | `BACKEND/PRPA/App.Infra.Data/Repoository/BaseRepository.cs` | Confirmado |
+| Repositorios ficam em `App.Infra.Data/Repository`. | `BACKEND/PRPA/App.Infra.Data/Repository/BaseRepository.cs` | Confirmado |
 | Controllers ficam em `PRPA/Controllers`. | `BACKEND/PRPA/PRPA/Controllers/*.cs` | Confirmado |
 
 ## Entidades e DTOs
@@ -40,7 +40,7 @@ Legenda: **Confirmado** = encontrado em arquivo de codigo; **Provavel** = indica
 | Padrao observado | Evidencia | Classificacao |
 |---|---|---|
 | Servico generico `BaseServices<T>` implementa CRUD assíncrono com validacao generica. | `BACKEND/PRPA/App.Service/Services/BaseServices.cs` | Confirmado |
-| Repositorio generico `BaseRepository<T>` encapsula operacoes EF como `AddAsync`, `FindAsync`, `Update` e `Remove`. | `BACKEND/PRPA/App.Infra.Data/Repoository/BaseRepository.cs` | Confirmado |
+| Repositorio generico `BaseRepository<T>` encapsula operacoes EF como `AddAsync`, `FindAsync`, `Update` e `Remove`. | `BACKEND/PRPA/App.Infra.Data/Repository/BaseRepository.cs` | Confirmado |
 | IoC registra `IServices<>` -> `BaseServices<>`, `IRepository<>` -> `BaseRepository<>` e `IUnitOfWork` -> `UnitOfWork`. | `BACKEND/PRPA/App.Infra.CrossCutting.IoC/NativeInjectorBootStrapper.cs` | Confirmado |
 | Existem services/repositories especificos registrados para varios dominios. | `BACKEND/PRPA/App.Infra.CrossCutting.IoC/NativeInjectorBootStrapper.cs` | Confirmado |
 
@@ -75,6 +75,6 @@ Legenda: **Confirmado** = encontrado em arquivo de codigo; **Provavel** = indica
 
 | Divergencia | Evidencia | Classificacao |
 |---|---|---|
-| Pasta de repositorio esta grafada como `Repoository`. | `BACKEND/PRPA/App.Infra.Data/Repoository/BaseRepository.cs` | Confirmado |
+| Pasta de repositorio esta padronizada como `Repository`. | `BACKEND/PRPA/App.Infra.Data/Repository/BaseRepository.cs` | Confirmado |
 | Nomenclatura de FKs mistura minusculo (`produtoid`) e PascalCase (`ProdutoId`). | Entidades e configs em `BACKEND/PRPA/App.Domain/Entities/PRPA` e `BACKEND/PRPA/App.Infra.Data/Map/PRPA` | Confirmado |
 | Convencao de rotas nao e uniforme. | Controllers em `BACKEND/PRPA/PRPA/Controllers/*.cs` | Confirmado |
