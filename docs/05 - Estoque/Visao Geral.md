@@ -69,5 +69,17 @@ Legenda: **Confirmado** = encontrado em arquivo de codigo; **Provavel** = indica
 
 | Documento | Finalidade | Status |
 |---|---|---|
-| `Contrato de Persistencia da Primeira Vertical de Estoque.md` | Especifica o contrato relacional, transacional, de idempotencia, outbox e migration inicial para `CriarMovimentacaoDeEstoque` e `ConfirmarMovimentacaoDeEstoque`. | Infraestrutura EF, repositories, idempotencia persistida, reserva transacional, outbox, Unit of Work e migration `20260727170707_CreateFirstEstoqueVertical` gerados; pre-deploy local revisado com `dotnet-ef` 8.0.0, builds e 65 cenarios aprovados; inspecao remota do banco demo bloqueada por ausencia de variaveis/gate e backup; nenhum banco foi atualizado; publicacao de outbox e retencao operacional permanecem fora do escopo atual. |
+| `Contrato de Persistencia da Primeira Vertical de Estoque.md` | Especifica o contrato relacional, transacional, de idempotencia, outbox e migration inicial para `CriarMovimentacaoDeEstoque` e `ConfirmarMovimentacaoDeEstoque`. | Infraestrutura EF, repositories, idempotencia persistida, reserva transacional, outbox, Unit of Work, migration `20260727170707_CreateFirstEstoqueVertical` e API publica minima gerados; build aprovado e harness com 75 cenarios aprovados; publicacao de outbox, frontend, entrada/saida/transferencia completas, saldos legados e retencao operacional permanecem fora do escopo atual. |
 | `Inventario da Implementacao Legada de Locais de Estoque.md` | Inventaria componentes legados de Localizacao/Local de Estoque, classifica destinos, consolida transicao, fonte da verdade, ocupacao, reserva e identificadores. | Arquitetura consolidada com ressalvas operacionais de go-live. |
+
+## API publica da nova vertical
+
+A primeira superficie HTTP da nova vertical foi exposta separadamente dos controllers CRUD legados.
+
+| Rota | Caso de uso | Observacao |
+|---|---|---|
+| `POST /api/estoque/movimentacoes` | `CriarMovimentacaoDeEstoqueHandler` | Requer `Idempotency-Key`, usuario autenticado com claim `id` numerica e versao esperada da UL. |
+| `POST /api/estoque/movimentacoes/{id}/confirmacao` | `ConfirmarMovimentacaoDeEstoqueHandler` | Requer `Idempotency-Key` e versoes esperadas da movimentacao e da UL. |
+| `GET /api/estoque/movimentacoes/{id}` | Consulta minima por repository | Retorna DTO de movimentacao, sem expor entidade EF diretamente. |
+
+Nao foram criadas rotas genericas de entrada, saida, transferencia, saldo ou edicao direta de UnidadeLogistica nesta etapa.

@@ -70,6 +70,7 @@ Módulos mais maduros: autenticação, menu/permissões, cadastros de produto, c
 
 | Fluxo | Status | Evidências | Pendências |
 |---|---|---|---|
+| Movimentacao de Estoque da nova vertical | Parcialmente implementado | `LocalDeEstoque`, `UnidadeLogistica`, `MovimentacaoDeEstoque`; `EstoqueMovimentacoesController`. | API publica minima para criar, confirmar e consultar movimentacao por ID; sem frontend e sem entrada/saida/transferencia completas. |
 | Saldo | Parcialmente implementado | `SaldoEstoque.cs`; `SaldoEstoqueController.cs`; services de saldo em operações. | Atualização automática por operações não confirmada. |
 | Entrada e saída | Parcialmente implementado | `MovimentoEstoque.cs`; `MovimentoEstoqueController.cs`; `entradaestoque/**`; `saidaestoque/**`. | Impacto em saldo/disponibilidade não confirmado. |
 | Transferência | Parcialmente implementado | `TransferenciaEstoque*`; controllers; `transferenciaestoque/**`. | TODO pede confirmar geração automática de movimentos de saída/entrada. |

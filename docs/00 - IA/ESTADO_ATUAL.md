@@ -266,7 +266,7 @@ Legenda: **Confirmado** = identificado diretamente em código/configuração; **
 | Banco demo hospedado | Variaveis `MES_DEMO_DB_*` e gate `MES_DEMO_CONFIRMATION` ausentes nesta execucao | Nao identificado |
 | Versao real do servidor | Inspecao remota nao executada por gate ausente | Nao identificado |
 | Backup/restauracao | Nao informado nesta execucao | Nao identificado |
-| Aplicacao da migration | `database update` nao executado; nenhum DDL remoto executado | Confirmado |
+| Aplicacao da migration | migration `20260727170707_CreateFirstEstoqueVertical` aplicada anteriormente no ambiente configurado; nenhum `database update` executado nesta etapa de API | Confirmado |
 ## Perguntas para validação humana
 
 - O `AGENTS.md` deveria estar vazio mesmo ou houve problema de codificação/conteúdo?
@@ -276,3 +276,14 @@ Legenda: **Confirmado** = identificado diretamente em código/configuração; **
 - O backend deve usar `http://localhost:5046` ou `https://localhost:7137` como alvo padrão do frontend em desenvolvimento?
 - As operações de estoque devem atualizar saldos/movimentos automaticamente no backend?
 - O histórico de versões de roteiro precisa de endpoint dedicado?
+
+## API publica da primeira vertical de Estoque
+
+| Item | Evidencia | Status |
+|---|---|---|
+| Controller publico novo | `BACKEND/PRPA/PRPA/Controllers/EstoqueMovimentacoesController.cs` | Confirmado |
+| Rotas expostas | `POST /api/estoque/movimentacoes`; `POST /api/estoque/movimentacoes/{id}/confirmacao`; `GET /api/estoque/movimentacoes/{id}` | Confirmado |
+| Casos de uso expostos | `CriarMovimentacaoDeEstoqueHandler`; `ConfirmarMovimentacaoDeEstoqueHandler`; consulta por ID via `IMovimentacaoDeEstoqueRepository` | Confirmado |
+| Seguranca | `[Authorize]`; sem `[AllowAnonymous]`; requer usuario autenticado com claim `id` numerica para `ActorId` | Confirmado |
+| Idempotencia e correlacao | headers `Idempotency-Key`, `X-Correlation-ID` e `X-Causation-ID` | Confirmado |
+| Fora do escopo desta entrega | frontend, entrada completa, saida completa, transferencia completa, saldo legado, nova migration e `database update` | Confirmado |

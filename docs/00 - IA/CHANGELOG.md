@@ -2,6 +2,8 @@
 
 ## 2026-07-28
 
+- Implementada a API publica da primeira vertical funcional de Estoque para `CriarMovimentacaoDeEstoque`, `ConfirmarMovimentacaoDeEstoque` e consulta por ID em `GET/POST /api/estoque/movimentacoes`, com autorizacao obrigatoria, `Idempotency-Key`, correlation ID, tratamento estavel de erros e 75 cenarios do harness aprovados; sem frontend, sem nova migration e sem `database update` nesta etapa.
+
 - Revisado o pre-deploy da migration `20260727170707_CreateFirstEstoqueVertical` apos reorganizacao do backend: toolchain local alinhada para `dotnet-ef` 8.0.0, builds e harness de dominio/aplicacao aprovados com 65 cenarios, script SQL gerado apenas para inspecao em diretorio ignorado e nenhuma migration aplicada.
 - Inspecao remota do banco de demonstracao classificada como bloqueada nesta execucao por ausencia das variaveis `MES_DEMO_DB_*` e do gate `MES_DEMO_CONFIRMATION=DEMO_DATABASE_CONFIRMED`; nenhum segredo foi registrado e nenhum DDL foi executado.
 
