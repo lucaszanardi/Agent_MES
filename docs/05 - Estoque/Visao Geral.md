@@ -35,6 +35,7 @@ Legenda: **Confirmado** = encontrado em arquivo de codigo; **Provavel** = indica
 | Bloqueio de estoque | `bloqueioestoque` | `FRONTEND/src/app/application/operacao/operacao-routing.module.ts` | Confirmado |
 | Inventario de estoque | `inventarioestoque` | `FRONTEND/src/app/application/operacao/operacao-routing.module.ts` | Confirmado |
 | Ajuste de estoque | `ajusteestoque` | `FRONTEND/src/app/application/operacao/operacao-routing.module.ts` | Confirmado |
+| Movimentacao da nova vertical | `movimentacaoestoque-nova` | `FRONTEND/src/app/application/operacao/operacao-routing.module.ts`; `FRONTEND/src/app/application/operacao/movimentacaoestoque-nova/**` | Confirmado |
 
 ## Endpoints especificos observados
 
@@ -83,3 +84,48 @@ A primeira superficie HTTP da nova vertical foi exposta separadamente dos contro
 | `GET /api/estoque/movimentacoes/{id}` | Consulta minima por repository | Retorna DTO de movimentacao, sem expor entidade EF diretamente. |
 
 Nao foram criadas rotas genericas de entrada, saida, transferencia, saldo ou edicao direta de UnidadeLogistica nesta etapa.
+
+## Frontend da nova vertical
+
+A rota operacional `/operacao/movimentacaoestoque-nova` implementa a interface da primeira vertical funcional de Estoque em abas para nova movimentacao e consulta, com etapas de Unidade Logistica, origem/destino, revisao, resultado e confirmacao. A tela permanece separada das telas legadas de entrada, saida, transferencia, reserva, bloqueio, inventario e ajuste.
+
+| Recurso | Evidencia | Observacao |
+|---|---|---|
+| Modulo | `FRONTEND/src/app/application/operacao/movimentacaoestoque-nova/movimentacaoestoque-nova.module.ts` | Lazy-loaded por `OperacaoRoutingModule`. |
+| Componente | `MovimentacaoestoqueNovaComponent` | Abas de nova movimentacao e consulta; etapas operacionais; revisao; detalhe estruturado; confirmacao quando o status permite. |
+| Service | `MovimentacaoEstoqueNovaService` | Consome apenas `estoque/movimentacoes`. |
+| Headers | `Idempotency-Key`, `X-Correlation-ID`, `X-Causation-ID`; `Authorization` via interceptor | POSTs usam idempotencia e correlacao; confirmacao envia causation ID quando ha movimentacao carregada. |
+| Erros | 400, 401, 404, 409 e 500 tratados com mensagens de usuario | 409 nao possui retry automatico. |
+| Limitacao | Sem endpoints de consulta para Unidade Logistica e LocalDeEstoque | Campos numericos foram mantidos; nao ha mock nem consumo de controllers legados para comandos. |
+
+## Consulta operacional read-only da nova vertical de Estoque
+
+Implementacao comprovada em `BACKEND/PRPA/PRPA/Controllers/EstoqueUnidadesLogisticasController.cs`, `BACKEND/PRPA/PRPA/Controllers/EstoqueLocaisController.cs` e `BACKEND/PRPA/App.Infra.Data/Persistence/Estoque/Consultas/ConsultaOperacionalEstoqueService.cs`.
+
+Endpoints criados:
+
+- `GET /api/estoque/unidades-logisticas/{id}`
+- `GET /api/estoque/unidades-logisticas?termo={termo}&page={page}&pageSize={pageSize}`
+- `GET /api/estoque/unidades-logisticas/{id}/movimentacoes`
+- `GET /api/estoque/locais/{id}`
+- `GET /api/estoque/locais?termo={termo}&page={page}&pageSize={pageSize}`
+- `GET /api/estoque/locais/{id}/unidades-logisticas`
+
+Campos retornados conforme modelo atual:
+
+- Unidade Logistica: id, codigo, produtoId, quantidade, unidadeMedidaId, status, versao, local atual id/codigo, plantId, warehouseId, dataCriacao e indicador de movimentacao ativa.
+- Movimentacao recente da UL: id, origem id/codigo, destino id/codigo, status, dataSolicitacao, dataConfirmacao, versao e correlationId.
+- Local de Estoque: id, codigo, status, versao, plantId, warehouseId e quantidade de ULs associadas.
+
+Limitacoes documentadas: o agregado `LocalDeEstoque` nao possui descricao, tipo, hierarquia fisica, local pai, capacidade ou ocupacao; o agregado `UnidadeLogistica` nao possui descricao, tipo ou data de atualizacao. A consulta nao usa `LocalizacaoEstoque`, `MovimentoEstoque` ou `SaldoEstoque` legados como fonte de verdade e nao executa escrita.
+
+Permissoes sugeridas para cadastro operacional/menu, sem insercao em banco nesta etapa: `estoque.unidade-logistica.consultar`, `estoque.unidade-logistica.historico`, `estoque.local.consultar`, `estoque.local.conteudo`.
+## Autorizacao granular da vertical atual - 2026-07-29
+
+As actions novas de Estoque aplicam policies backend alem de `[Authorize]`. As permissoes efetivas sao: `estoque.movimentacao.consultar`, `estoque.movimentacao.criar`, `estoque.movimentacao.confirmar`, `estoque.unidade-logistica.consultar`, `estoque.unidade-logistica.historico`, `estoque.local.consultar` e `estoque.local.conteudo`.
+
+O backend aceita a permissao como claim `permission`, claim `permissions` separada por virgula, ou role com o mesmo nome da permissao, preservando o padrao JWT/roles existente. Usuario nao autenticado deve receber 401; usuario autenticado sem permissao deve receber 403.
+
+Rotas canonicas para menu dinamico: `/operacao/movimentacaoestoque-nova`, `/operacao/unidades-logisticas` e `/operacao/locais-estoque`. A montagem paralela `/home/operacao/...` permanece por ser preexistente; nao deve ser usada como link novo de menu.
+
+Menu pendente de cadastro manual: Operacao > Estoque > Movimentacao de Estoque, Unidades Logisticas e Locais de Estoque. Nao houve migration nem database update.

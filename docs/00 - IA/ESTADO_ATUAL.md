@@ -286,4 +286,108 @@ Legenda: **Confirmado** = identificado diretamente em código/configuração; **
 | Casos de uso expostos | `CriarMovimentacaoDeEstoqueHandler`; `ConfirmarMovimentacaoDeEstoqueHandler`; consulta por ID via `IMovimentacaoDeEstoqueRepository` | Confirmado |
 | Seguranca | `[Authorize]`; sem `[AllowAnonymous]`; requer usuario autenticado com claim `id` numerica para `ActorId` | Confirmado |
 | Idempotencia e correlacao | headers `Idempotency-Key`, `X-Correlation-ID` e `X-Causation-ID` | Confirmado |
-| Fora do escopo desta entrega | frontend, entrada completa, saida completa, transferencia completa, saldo legado, nova migration e `database update` | Confirmado |
+| Fora do escopo da entrega de API anterior | entrada completa, saida completa, transferencia completa, saldo legado, nova migration, frontend naquele momento e `database update` | Confirmado |
+
+## Frontend da primeira vertical de Estoque
+
+| Item | Evidencia | Status |
+|---|---|---|
+| Rota frontend | `FRONTEND/src/app/application/operacao/operacao-routing.module.ts` com `movimentacaoestoque-nova` | Confirmado |
+| Modulo lazy-loaded | `FRONTEND/src/app/application/operacao/movimentacaoestoque-nova/movimentacaoestoque-nova.module.ts`; `movimentacaoestoque-nova-routing.module.ts` | Confirmado |
+| Componente | `FRONTEND/src/app/application/operacao/movimentacaoestoque-nova/components/movimentacaoestoque-nova/movimentacaoestoque-nova.component.ts` com abas de nova movimentacao/consulta, etapas operacionais, revisao e confirmacao | Confirmado |
+| Service HTTP | `FRONTEND/src/app/application/operacao/movimentacaoestoque-nova/services/movimentacaoestoque-nova.service.ts` | Confirmado |
+| Endpoints consumidos | `POST /api/estoque/movimentacoes`; `POST /api/estoque/movimentacoes/{id}/confirmacao`; `GET /api/estoque/movimentacoes/{id}` | Confirmado |
+| Headers | `Authorization` via interceptor; `Idempotency-Key`; `X-Correlation-ID`; `X-Causation-ID` quando aplicavel | Confirmado |
+| Escopo mantido | Sem uso de `MovimentoEstoqueService` legado, sem PUT/DELETE, sem mocks e sem endpoints legados para comandos | Confirmado |
+| Limitacao conhecida | A API `GET /api/estoque/movimentacoes/{id}` nao retorna a versao da Unidade Logistica; a tela solicita esse valor apenas na confirmacao quando a movimentacao foi carregada por consulta direta. | Confirmado |
+| Validacao tecnica | `npm.cmd run build` aprovado; testes globais do frontend falham por specs existentes sem providers, fora da nova vertical; lint nao configurado | Confirmado |
+
+## Consulta operacional da nova vertical de Estoque
+
+| Item | Evidencia | Estado |
+|---|---|---|
+| API de Unidade Logistica | `BACKEND/PRPA/PRPA/Controllers/EstoqueUnidadesLogisticasController.cs`; `IConsultaOperacionalEstoqueService` | Implementado read-only |
+| API de Local de Estoque | `BACKEND/PRPA/PRPA/Controllers/EstoqueLocaisController.cs`; `ConsultaOperacionalEstoqueService` | Implementado read-only |
+| Frontend de UL | `FRONTEND/src/app/application/operacao/unidades-logisticas/**` | Implementado |
+| Frontend de Local | `FRONTEND/src/app/application/operacao/locais-estoque/**` | Implementado |
+| Integracao com movimentacao | `FRONTEND/src/app/application/operacao/movimentacaoestoque-nova/**` | Consulta UL/local e preenche ids operacionais, origem e versao esperada |
+| Separacao do legado | Consultas usam `CUNIDADELOGISTICA`, `CLOCALDEESTOQUE`, `CMOVIMENTACAODEESTOQUE` | Confirmado |
+| Limitacoes do modelo | `LocalDeEstoque` nao possui descricao, tipo, hierarquia fisica ou local pai; `UnidadeLogistica` nao possui descricao/tipo/data de atualizacao | Confirmado |
+## Ajuste tecnico da autorizacao da vertical de Estoque - 2026-07-29
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| Autorizacao granular backend | Implementada por policies ASP.NET Core em `PRPA.Auth.EstoqueAuthorization` | `BACKEND/PRPA/PRPA/Auth/EstoqueAuthorization.cs`; controllers `api/estoque/*` |
+| 401 | Preservado para usuario nao autenticado via `[Authorize]` e middleware JWT | `BACKEND/PRPA/PRPA/Program.cs`; controllers novos de Estoque |
+| 403 | Aplicavel a usuario autenticado sem role/claim da permissao requerida | `EstoqueAuthorization.ConfigurePolicies` |
+| Permissoes aceitas | Claim `permission`, claim `permissions` separada por virgula, ou role com o mesmo nome da permissao | `EstoqueAuthorization.UserHasPermission` |
+| Rotas canonicas frontend | `/operacao/movimentacaoestoque-nova`, `/operacao/unidades-logisticas`, `/operacao/locais-estoque` | `FRONTEND/src/app/app-routing.module.ts`; `operacao-routing.module.ts` |
+| Duplicidade de montagem | Mantida: `OperacaoModule` esta montado em `/operacao` e tambem em `/home/operacao`; nao foi corrigida por ser preexistente e de maior risco | `FRONTEND/src/app/app-routing.module.ts`; `FRONTEND/src/app/application/application-routing.module.ts` |
+| Menu dinamico | Pendente de cadastro manual no banco; nao houve migration nem database update | `Menu.Link`; `menulateral.component.html` |
+## Cadastro legado de Locais de Estoque - ajuste pos-salvamento - 2026-07-29
+
+| Item | Estado |
+|---|---|
+| Tela | `FRONTEND/src/app/application/cadastro/localizacaoestoque/**` |
+| Modelo usado | `LocalizacaoEstoque` legado |
+| Tabela persistida | `CLOCALIZACAOESTOQUE` |
+| Nova vertical | `LocalDeEstoque` continua separado em `CLOCALDEESTOQUE`; nao existe sincronizacao automatica nesta correcao |
+| Comportamento pos-salvamento | Mantem Armazem/Area, recarrega hierarquia da area, seleciona o local salvo e permanece em edicao |
+| Limitacao | A ocupacao real nao foi implementada/simulada; status ocupado so depende de campo retornado pela API quando existir |
+
+## Atualizacao tecnica - Locais de Estoque legados - 2026-07-29
+
+Implementado endpoint `GET /api/localizacao-estoque/paginado` para consulta paginada de `CLOCALIZACAOESTOQUE`, registrado em IoC por `ILocalizacaoEstoqueConsultaService`. A rota frontend recomendada para menu e `/home/cadastro/locais-estoque`; o mapa/editor fica em `/home/cadastro/locais-estoque/mapa`.
+
+Build frontend validado com `npm.cmd run build`. Build backend compila os projetos alterados, mas a solucao completa nao conclui a etapa de copia do projeto `PRPA` porque o processo `PRPA (54952)` mantem DLLs bloqueadas em `BACKEND/PRPA/PRPA/bin/Debug/net8.0`.
+## Atualizacao funcional - Listagem contextual de Locais de Estoque - 2026-07-29
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| Consulta por contexto | A listagem de `LocalizacaoEstoque` passou a exigir selecao de Armazem e Area de Estoque antes de carregar a grid. | `FRONTEND/src/app/application/cadastro/localizacaoestoque/components/listlocalizacaoestoque/listlocalizacaoestoque.component.ts` |
+| Areas por Armazem | Ao selecionar Armazem, a tela carrega Areas pelo endpoint legado `AreaEstoque/por-almoxarifado/{id}` e limpa Area/grid ao trocar o contexto. | `AreaEstoqueService.getPorAlmoxarifado` |
+| Grid | Colunas Armazem e Area foram removidas da grid porque o contexto fica no bloco superior. | `listlocalizacaoestoque.component.html` |
+| Paginacao | Continua server-side via `GET /api/localizacao-estoque/paginado`, sempre enviando `armazemId`, `areaEstoqueId`, `page` e `pageSize`. | `LocalizacaoEstoqueService.pesquisarLocalizacoes` |
+| Navegacao | Mapa, Novo local, Editar e Mapa por linha encaminham `armazemId` e `areaEstoqueId` como query string para o editor hierarquico legado. | `abrirMapa` |
+| Modelo | Continua usando `LocalizacaoEstoque` legado e `CLOCALIZACAOESTOQUE`; nao usa `LocalDeEstoque` da nova vertical. | `LocalizacaoEstoqueController`; `LocalizacaoEstoqueConsultaService` |
+
+## Atualizacao funcional - Navegacao e semantica do mapa de Locais de Estoque - 2026-07-30
+
+| Item | Estado | Evidencia |
+|---|---|---|
+| Abrir mapa | A acao da listagem foi renomeada de `Mapa hierarquico` para `Abrir mapa` e navega para o editor sem ativar criacao. | `FRONTEND/src/app/application/cadastro/localizacaoestoque/components/listlocalizacaoestoque/listlocalizacaoestoque.component.html` |
+| Novo local | A acao exige Armazem e Area e navega com `modo=novo`, preservando o contexto por query string. | `listlocalizacaoestoque.component.ts` |
+| Primeiro local | Em area sem estrutura, o editor exibe `Criar primeiro local`, iniciando local raiz com Armazem/Area preservados e pai nulo. | `cadlocalizacaoestoque.component.html`; `cadlocalizacaoestoque.component.ts` |
+| Filho | `Adicionar abaixo` foi renomeado para `Adicionar filho` e fica habilitado somente com no selecionado e proximo nivel disponivel. | `cadlocalizacaoestoque.component.html`; `podeAdicionarFilho` |
+| Raizes multiplas | O backend legado monta multiplas raizes e nao foi identificada trava de raiz unica; por isso `Criar nova raiz` foi mantido como acao secundaria, fora do cabecalho principal. | `LocalizacaoEstoqueServices.GetArvorePorAreaAsync`; `cadlocalizacaoestoque.component.html` |
+| Modo compacto | Possui efeito visual real e foi movido para controle secundario de exibicao `Confortavel/Compacta`. | `cadlocalizacaoestoque.component.html`; `cadlocalizacaoestoque.component.scss` |
+
+## Regra hierarquica de armazenagem dos locais legados - 2026-07-30
+
+A regra se aplica somente ao legado `LocalizacaoEstoque`/`CLOCALIZACAOESTOQUE`. Nao altera `LocalDeEstoque`, nao cria migration, nao executa `database update` e nao adiciona coluna persistida de armazenagem.
+
+Semantica implementada: local com filhos e sempre estrutural e nao recebe armazenagem direta; local folha pode armazenar apenas quando nao esta bloqueado e seu `TipoLocalizacao.permitearmazenagem` indica que o tipo pode encerrar a hierarquia; local folha bloqueado fica bloqueado; local folha cujo tipo nao permite terminal fica como `REQUER_FILHO`.
+
+`TipoLocalizacao.permitearmazenagem` deve ser interpretado como permissao do tipo para ser terminal, nao como garantia isolada de armazenagem em qualquer no. A armazenagem real e calculada em runtime por `LocalizacaoEstoqueServices.GetArvorePorAreaAsync` e pela consulta paginada `LocalizacaoEstoqueConsultaService.SearchAsync`.
+
+Ao criar filho, o pai passa a ser classificado como estrutural por possuir filhos. Ao excluir filho, a classificacao do pai e recalculada nas proximas leituras; a exclusao de localizacao que ainda possui filhos e bloqueada no service legado.
+
+Diagnostico de dados: nao foi executada correcao automatica nem script de banco. Inconsistencias existentes devem ser avaliadas por consulta read-only antes de qualquer normalizacao operacional.
+
+## Editor hierarquico de Locais de Estoque como workspace continuo - 2026-07-30
+
+A tela `FRONTEND/src/app/application/cadastro/localizacaoestoque/components/cadlocalizacaoestoque` foi ajustada para operar como workspace continuo de configuracao da hierarquia legada `LocalizacaoEstoque`/`CLOCALIZACAOESTOQUE`.
+
+Modos explicitos do editor: `consulta`, `edicao`, `novo-raiz`, `novo-filho` e `novo-irmao`. O modo passa a orientar titulos, mensagens, acoes e preservacao de contexto.
+
+O contexto de Armazem e Area de Estoque deve permanecer durante selecao de no, edicao, criacao de filho, criacao de irmao, criacao de raiz, salvamento, exclusao e recarga da arvore. A troca de contexto fica explicita por selecao de outro Armazem/Area ou acao `Trocar contexto`.
+
+Criacao de filho: preserva Armazem, Area, arvore e pai destacado; limpa somente campos proprios do novo local; preenche `localizacaoPaiId`; sugere o proximo Tipo de Localizacao; permanece na mesma tela.
+
+Criacao de irmao: usa o mesmo pai do no selecionado, preserva contexto e arvore, sugere o mesmo Tipo de Localizacao da referencia e permanece na mesma tela.
+
+Apos salvar novo local ou edicao, a tela recarrega a hierarquia da Area atual, seleciona o no salvo e permanece no editor. Apos excluir, a tela recarrega a hierarquia e seleciona o pai, o proximo irmao ou deixa a Area em estado vazio com acao `Criar primeiro local`.
+
+A volta para `/home/cadastro/locais-estoque` e uma acao explicita por `Voltar para lista`, preservando query params de Armazem, Area, pagina, pageSize e filtros quando recebidos da grid.
+
+Alteracoes nao salvas passam a solicitar confirmacao antes de selecionar outro no, adicionar filho/irmao, trocar contexto, cancelar ou voltar para a lista. Nao houve alteracao em backend, migration, `LocalDeEstoque`, `UnidadeLogistica`, `MovimentacaoDeEstoque` ou `SaldoEstoque`.
