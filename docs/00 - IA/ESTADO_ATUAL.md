@@ -374,6 +374,10 @@ Ao criar filho, o pai passa a ser classificado como estrutural por possuir filho
 
 Diagnostico de dados: nao foi executada correcao automatica nem script de banco. Inconsistencias existentes devem ser avaliadas por consulta read-only antes de qualquer normalizacao operacional.
 
+## Decisao aprovada - Finalidade configurada dos Locais de Estoque legados - 2026-07-31
+
+Aprovada em `AS-0008` e formalizada em `DL-0042`. Resumo: `LocalizacaoEstoque` passara a ter "finalidade configurada" (`Estrutural`/`Armazenagem`) persistida em nova coluna `finalidadelocalizacao` (smallint, NOT NULL, default `Estrutural`) em `CLOCALIZACAOESTOQUE`. A classificacao efetiva (`ESTRUTURAL`/`ARMAZENA`/`BLOQUEADO`) permanecera calculada em runtime e **nao sera persistida**. O estado `REQUER_FILHO` sera eliminado. `TipoLocalizacao.permitearmazenagem` passa a funcionar apenas como sugestao inicial na criacao de novos locais. Regra efetiva: bloqueado -> `BLOQUEADO`; com filhos -> `ESTRUTURAL`; folha com `finalidade=Armazenagem` -> `ARMAZENA`; folha com `finalidade=Estrutural` -> `ESTRUTURAL`. Um local com filhos nunca armazena efetivamente; a finalidade `Armazenagem` pode permanecer persistida enquanto houver filhos; ao perder o ultimo filho, o local volta a seguir a finalidade persistida. Contrato tecnico: `docs/05 - Estoque/Contrato de Persistencia da Finalidade de Localizacao de Estoque Legada.md`. Esta decisao e uma excecao controlada, aditiva e pontual ao congelamento semantico aprovado em `DL-0041`, nao altera `CLOCALDEESTOQUE`, `UnidadeLogistica`, `MovimentacaoDeEstoque` ou `SaldoEstoque`, nao promove `LocalizacaoEstoque` a Aggregate Root e nao cria sincronizacao automatica com a nova vertical. Implementacao pendente: nenhuma migration, nenhum script SQL, nenhuma alteracao de codigo e nenhum `database update` foram aplicados nesta etapa documental.
+
 ## Editor hierarquico de Locais de Estoque como workspace continuo - 2026-07-30
 
 A tela `FRONTEND/src/app/application/cadastro/localizacaoestoque/components/cadlocalizacaoestoque` foi ajustada para operar como workspace continuo de configuracao da hierarquia legada `LocalizacaoEstoque`/`CLOCALIZACAOESTOQUE`.

@@ -68,6 +68,14 @@ Ao criar filho, o pai passa a ser classificado como estrutural por possuir filho
 
 Diagnostico de dados: nao foi executada correcao automatica nem script de banco. Inconsistencias existentes devem ser avaliadas por consulta read-only antes de qualquer normalizacao operacional.
 
+## Decisao aprovada - Finalidade configurada dos Locais de Estoque legados - 2026-07-31
+
+- Criada a `AS-0008 - Finalidade Configurada e Classificacao Efetiva dos Locais de Estoque Legados` que aprova a separacao entre finalidade configurada (persistida) e classificacao efetiva (calculada em runtime), registra as alternativas avaliadas (manter regra atual, tornar toda folha armazenadora, finalidade configurada por local, mover para `LocalDeEstoque`) e aprova a alternativa "finalidade configurada por local com classificacao efetiva derivada".
+- Criada a `DL-0042 - Finalidade de Armazenagem por Localizacao de Estoque Legada` que formaliza a regra, os invariantes, as consequencias, os riscos, os impactos, a excecao controlada ao congelamento semantico do legado aprovado em `DL-0041`, os criterios de conclusao, o rollback conceitual e os responsaveis pela validacao humana.
+- Criado o contrato tecnico `docs/05 - Estoque/Contrato de Persistencia da Finalidade de Localizacao de Estoque Legada.md` definindo coluna `finalidadelocalizacao` (smallint, NOT NULL, default `1 - Estrutural`) em `CLOCALIZACAOESTOQUE`, enum `FinalidadeLocalizacao` (`Estrutural=1`, `Armazenagem=2`), regra de backfill, condicionantes (nao atinge `CLOCALDEESTOQUE`, `UnidadeLogistica`, `MovimentacaoDeEstoque`), restricoes de indices/FK/trigger e estrategia de rollback.
+- Estado `REQUER_FILHO` declarado eliminado a partir da implementacao futura desta decisao.
+- Nenhum codigo, migration, script SQL, endpoint, frontend ou `database update` foi aplicado nesta etapa; trata-se exclusivamente de decisao documental aprovada por validacao humana.
+
 ## Editor hierarquico de Locais de Estoque como workspace continuo - 2026-07-30
 
 A tela `FRONTEND/src/app/application/cadastro/localizacaoestoque/components/cadlocalizacaoestoque` foi ajustada para operar como workspace continuo de configuracao da hierarquia legada `LocalizacaoEstoque`/`CLOCALIZACAOESTOQUE`.

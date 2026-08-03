@@ -349,6 +349,10 @@ Ao criar filho, o pai passa a ser classificado como estrutural por possuir filho
 
 Diagnostico de dados: nao foi executada correcao automatica nem script de banco. Inconsistencias existentes devem ser avaliadas por consulta read-only antes de qualquer normalizacao operacional.
 
+## Decisao aprovada - Finalidade configurada dos Locais de Estoque legados - 2026-07-31
+
+Aprovada em `AS-0008` e formalizada em `DL-0042`. Resumo funcional: o operador podera configurar, por localizacao, a finalidade `Estrutural` ou `Armazenagem`. A classificacao efetiva (`ESTRUTURAL`/`ARMAZENA`/`BLOQUEADO`) sera calculada em runtime e nao sera persistida. O estado `REQUER_FILHO` sera eliminado. `TipoLocalizacao.permitearmazenagem` passa a ser apenas sugestao inicial na criacao de novos locais. Permite, dentro de uma mesma Area de Estoque, ramos com profundidades variaveis e folhas com finalidades diferentes (ex.: `COLUNA1` e `ANDAR1` como armazenadores enquanto `COLUNA3` e estrutural pai de `ANDAR1`). A regra prevê: local bloqueado -> `BLOQUEADO`; local com filhos -> `ESTRUTURAL` efetivo (finalidade persistida pode continuar `Armazenagem`); folha com `finalidade=Armazenagem` -> `ARMAZENA`; folha com `finalidade=Estrutural` -> `ESTRUTURAL`; ao perder o ultimo filho, o local volta a seguir a finalidade persistida. Contrato tecnico em `docs/05 - Estoque/Contrato de Persistencia da Finalidade de Localizacao de Estoque Legada.md`. Excecao controlada, aditiva e pontual ao congelamento semantico do legado aprovado em `DL-0041`. Sem alteracao em `CLOCALDEESTOQUE`, `UnidadeLogistica`, `MovimentacaoDeEstoque` ou `SaldoEstoque`. Implementacao pendente: nenhum codigo, migration, script SQL ou `database update` foi aplicado nesta etapa documental.
+
 ## Editor hierarquico de Locais de Estoque como workspace continuo - 2026-07-30
 
 A tela `FRONTEND/src/app/application/cadastro/localizacaoestoque/components/cadlocalizacaoestoque` foi ajustada para operar como workspace continuo de configuracao da hierarquia legada `LocalizacaoEstoque`/`CLOCALIZACAOESTOQUE`.

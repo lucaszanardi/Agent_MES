@@ -60,6 +60,23 @@ Ao criar filho, o pai passa a ser classificado como estrutural por possuir filho
 
 Diagnostico de dados: nao foi executada correcao automatica nem script de banco. Inconsistencias existentes devem ser avaliadas por consulta read-only antes de qualquer normalizacao operacional.
 
+## Decisao aprovada - Finalidade configurada dos Locais de Estoque legados - 2026-07-31
+
+Aprovada em `AS-0008` e formalizada em `DL-0042`. Resumo para enderecamento:
+
+- `LocalizacaoEstoque` passara a ter finalidade configurada (`Estrutural`/`Armazenagem`) persistida em nova coluna `finalidadelocalizacao` de `CLOCALIZACAOESTOQUE` (smallint, NOT NULL, default `Estrutural`).
+- A classificacao efetiva (`ESTRUTURAL`/`ARMAZENA`/`BLOQUEADO`) permanecera calculada em runtime, **nao persistida**.
+- O estado `REQUER_FILHO` sera eliminado em arvore, grid, filtros, DTOs e frontend.
+- `TipoLocalizacao.permitearmazenagem` passa a ser apenas sugestao inicial na criacao de novos locais.
+- Permite, dentro de uma mesma `AreaEstoque`, ramos com profundidades variaveis e folhas com finalidades diferentes (ex.: `RUA1 -> COLUNA1 (ARMAZENA)`, `RUA2 -> COLUNA2 (ARMAZENA)`, `RUA3 -> COLUNA3 -> ANDAR1 (ARMAZENA)`, com `COLUNA3` estrutural pai de `ANDAR1`).
+- Regra efetiva: bloqueado -> `BLOQUEADO`; com filhos -> `ESTRUTURAL`; folha + `Armazenagem` -> `ARMAZENA`; folha + `Estrutural` -> `ESTRUTURAL`.
+- Um local com filhos nunca armazena efetivamente; finalidade `Armazenagem` pode permanecer persistida enquanto houver filhos; ao perder o ultimo filho, o local volta a seguir a finalidade persistida.
+- Excecao controlada, aditiva e pontual ao congelamento semantico aprovado em `DL-0041`.
+- Sem alteracao em `CLOCALDEESTOQUE`, `UnidadeLogistica` ou `MovimentacaoDeEstoque`.
+- Contrato tecnico: `docs/05 - Estoque/Contrato de Persistencia da Finalidade de Localizacao de Estoque Legada.md`.
+
+Implementacao pendente: nenhum codigo, migration, script SQL, endpoint, frontend ou `database update` foi aplicado nesta etapa documental. Aplicacao requer validacao humana previa conforme DL-0042.
+
 ## Editor hierarquico de Locais de Estoque como workspace continuo - 2026-07-30
 
 A tela `FRONTEND/src/app/application/cadastro/localizacaoestoque/components/cadlocalizacaoestoque` foi ajustada para operar como workspace continuo de configuracao da hierarquia legada `LocalizacaoEstoque`/`CLOCALIZACAOESTOQUE`.

@@ -25,6 +25,7 @@ Uma Architecture Session consolida o contexto, os problemas analisados, alternat
 | AS-0005 | Arquitetura da Primeira Vertical Funcional do Dominio de Estoque | 2026-07-24 | Concluida | DL-0030, DL-0031, DL-0032 |
 | AS-0006 | Avaliacao de Prontidao Tecnica para Implementacao da Primeira Vertical de Estoque | 2026-07-24 | Concluida | Nao gera Decision Log |
 | AS-0007 | Arquitetura Tecnica da Primeira Vertical Funcional de Estoque | 2026-07-24 | Concluida | DL-0033, DL-0034, DL-0035, DL-0036, DL-0037 |
+| AS-0008 | Finalidade Configurada e Classificacao Efetiva dos Locais de Estoque Legados | 2026-07-31 | Concluida | DL-0042 |
 
 Proxima etapa planejada:
 
@@ -39,4 +40,5 @@ Implementar o primeiro incremento de codigo recomendado pela AS-0007: nucleo de 
 - `AS-0005 - Arquitetura da Primeira Vertical Funcional do Dominio de Estoque.md`
 - `AS-0006 - Avaliacao de Prontidao Tecnica para Implementacao da Primeira Vertical de Estoque.md`
 - `AS-0007 - Arquitetura Tecnica da Primeira Vertical Funcional de Estoque.md`
+- `AS-0008 - Finalidade Configurada e Classificacao Efetiva dos Locais de Estoque Legados.md`
 

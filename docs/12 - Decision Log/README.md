@@ -55,6 +55,8 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 | DL-0039 | Exclusividade Ativa por Reserva Transacional de Unidade Logistica | Aprovado | AS-0007 |
 | DL-0040 | Identificadores e Retencao Operacional da Persistencia de Estoque | Aprovado com ressalvas operacionais | AS-0007 |
 | DL-0041 | Transicao do Legado de Localizacao para Local de Estoque MES | Aprovado | AS-0007 |
+| DL-0042 | Finalidade de Armazenagem por Localizacao de Estoque Legada | Aprovado | AS-0008 |
+
 
 ## Arquivos
 
@@ -99,4 +101,5 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 - `DL-0039 - Exclusividade Ativa por Reserva Transacional de Unidade Logistica.md`
 - `DL-0040 - Identificadores e Retencao Operacional da Persistencia de Estoque.md`
 - `DL-0041 - Transicao do Legado de Localizacao para Local de Estoque MES.md`
+- `DL-0042 - Finalidade de Armazenagem por Localizacao de Estoque Legada.md`
 
