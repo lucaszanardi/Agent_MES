@@ -66,6 +66,16 @@ Legenda: **Confirmado** = encontrado em arquivo de codigo; **Provavel** = indica
 | Catalogos para status/tipo/motivo de movimentos, reservas, lotes e documentos nao foram identificados como entidades. | Campos aparecem em entidades como `MovimentoEstoque.cs`, `ReservaEstoque.cs`, `LoteMaterial.cs` e `RecebimentoEstoque.cs`. | Nao identificado |
 | Integracao com ERP/WMS externo para estoque nao foi encontrada no codigo analisado. | Busca em controllers, services e environments nao confirmou endpoint externo de ERP/WMS. | Nao identificado |
 
+## Planta, Armazem e WarehouseId
+
+Referencias: AS-0009 e DL-0043.
+
+Planta e o escopo fisico superior aprovado para operacoes industriais e logisticas. `Almoxarifado`/`CALMOXARIFADO` representa Armazem/Warehouse e `WarehouseId` equivale a `AlmoxarifadoId`; nao deve existir cadastro separado de Warehouse.
+
+`PlantId` deve ser derivado pela associacao `Almoxarifado -> Planta`. Para `LocalizacaoEstoque`, ele nao deve ser repetido ou informado manualmente em cada registro.
+
+Estado tecnico atual: entidade Planta, tabela de Planta, vinculo `Almoxarifado -> Planta`, migration e backfill ainda nao foram implementados. A decisao sobre manter, integrar ou eliminar `CLOCALDEESTOQUE` permanece fora desta decisao e devera ser tratada em AS propria.
+
 ## Especificacoes tecnicas
 
 | Documento | Finalidade | Status |
@@ -129,3 +139,15 @@ O backend aceita a permissao como claim `permission`, claim `permissions` separa
 Rotas canonicas para menu dinamico: `/operacao/movimentacaoestoque-nova`, `/operacao/unidades-logisticas` e `/operacao/locais-estoque`. A montagem paralela `/home/operacao/...` permanece por ser preexistente; nao deve ser usada como link novo de menu.
 
 Menu pendente de cadastro manual: Operacao > Estoque > Movimentacao de Estoque, Unidades Logisticas e Locais de Estoque. Nao houve migration nem database update.
+
+## Identidade unica de enderecos de estoque
+
+Referencias: AS-0010, DL-0044 e `Contrato de Transicao para Identidade Unica de Localizacao de Estoque.md`.
+
+`LocalizacaoEstoque`/`CLOCALIZACAOESTOQUE` sera a fonte de verdade fisica e operacional dos enderecos de estoque. `LocalDeEstoque`/`CLOCALDEESTOQUE` deixa de ser usado como identidade operacional independente e sera descontinuado em transicao futura.
+
+Nao havera publicacao de `LocalizacaoEstoque` para `LocalDeEstoque`, sincronizacao entre duas tabelas de endereco ou cadastro operacional separado de local.
+
+Somente localizacao com classificacao efetiva `ARMAZENA` pode receber Unidade Logistica e ser usada como origem/destino. `ESTRUTURAL` e `BLOQUEADO` nao sao elegiveis.
+
+A remocao fisica de `CLOCALDEESTOQUE` nao foi executada e somente podera ocorrer apos refatoracao completa, testes, revisao SQL e validacao humana.

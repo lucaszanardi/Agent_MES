@@ -103,3 +103,19 @@ Apos salvar novo local ou edicao, a tela recarrega a hierarquia da Area atual, s
 A volta para `/home/cadastro/locais-estoque` e uma acao explicita por `Voltar para lista`, preservando query params de Armazem, Area, pagina, pageSize e filtros quando recebidos da grid.
 
 Alteracoes nao salvas passam a solicitar confirmacao antes de selecionar outro no, adicionar filho/irmao, trocar contexto, cancelar ou voltar para a lista. Nao houve alteracao em backend, migration, `LocalDeEstoque`, `UnidadeLogistica`, `MovimentacaoDeEstoque` ou `SaldoEstoque`.
+
+## Identidade unica e elegibilidade operacional - 2026-08-03
+
+AS-0010 e DL-0044 aprovam `LocalizacaoEstoque` como identidade unica fisica e operacional dos enderecos de estoque.
+
+Regras documentais:
+
+- somente classificacao efetiva `ARMAZENA` pode receber Unidade Logistica;
+- `ESTRUTURAL` nao recebe estoque e nao pode ser origem/destino;
+- `BLOQUEADO` nao recebe estoque e nao pode ser origem/destino;
+- entrada exige `permiteentrada = true`, capacidade disponivel quando aplicavel e escopo valido de Planta/Almoxarifado;
+- saida exige `permitesaida = true`, existencia da UL na localizacao e ausencia de impedimento operacional;
+- uso produtivo deve respeitar `permiteproducao` e dependera de detalhamento futuro do modulo de Producao;
+- alteracao hierarquica que tornaria uma localizacao armazenadora em estrutural deve ser bloqueada se houver dependencia operacional.
+
+Nenhuma implementacao foi realizada nesta atualizacao documental.

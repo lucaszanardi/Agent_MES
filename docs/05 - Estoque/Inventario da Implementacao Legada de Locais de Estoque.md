@@ -285,3 +285,21 @@ Inconsistencia registrada: o dominio e a aplicacao ja exigem `MovimentacaoDeEsto
 A implementacao legada de Locais de Estoque deve ser preservada como cadastro estrutural e fonte de migracao/correlacao, mas nao deve ser promovida a owner da primeira vertical MES.
 
 A transicao oficial e paralela e controlada: legado congelado semanticamente, nova tabela `CLOCALDEESTOQUE`, carga inicial, correlacao, operacao da nova vertical em tabelas MES e substituicao gradual dos fluxos legados somente apos cobertura funcional e decisao humana.
+
+## 16. Planta, Armazem e WarehouseId
+
+Referencias: AS-0009 e DL-0043.
+
+`Almoxarifado`/`CALMOXARIFADO` e a fonte aprovada para a identidade operacional de Armazem/Warehouse. `WarehouseId` equivale a `AlmoxarifadoId` e nao deve haver cadastro separado de Warehouse.
+
+`PlantId` deve ser derivado pela associacao `LocalizacaoEstoque -> Almoxarifado -> Planta`. Para registros legados, o vinculo `Almoxarifado -> Planta` podera ser temporariamente opcional durante transicao e backfill; apos a transicao, devera ser obrigatorio.
+
+A entidade Planta, a tabela de Planta, o vinculo `Almoxarifado -> Planta`, a migration e o backfill ainda nao estao implementados. A decisao sobre manter, integrar ou eliminar `CLOCALDEESTOQUE` nao foi tomada nesta AS.
+
+## 17. Identidade unica fisica e operacional
+
+Referencias: AS-0010, DL-0044 e contrato de transicao.
+
+A transicao anterior com coexistencia entre `CLOCALIZACAOESTOQUE` e `CLOCALDEESTOQUE` foi parcialmente substituida pela decisao de identidade unica: `CLOCALIZACAOESTOQUE` sera a fonte de verdade fisica e operacional.
+
+Como `CLOCALDEESTOQUE`, `CUNIDADELOGISTICA` e `CMOVIMENTACAODEESTOQUE` estao vazias no estado informado, nao ha dados operacionais para migrar. A remocao fisica de `CLOCALDEESTOQUE` permanece futura, incremental e condicionada a refatoracao completa.

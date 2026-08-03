@@ -79,6 +79,39 @@ Nao cria enumeracao fisica nesta documentacao.
 
 Unidade utilizada para quantificar, movimentar, consumir, produzir ou armazenar materiais.
 
+### Planta
+
+Unidade fisica superior de operacao industrial ou logistica, pertencente a uma Empresa e responsavel por agrupar Armazens, areas produtivas, linhas, recursos e areas mistas.
+
+Referencia: `../12 - Decision Log/DL-0043 - Planta como Escopo Superior de Producao Armazens e Estoque.md`.
+
+### Planta Industrial
+
+Planta que possui processos produtivos.
+
+### Planta Logistica
+
+Planta dedicada principalmente a armazenagem, distribuicao ou operacao logistica, sem obrigacao de possuir linhas de producao.
+
+### Planta Mista
+
+Planta que combina producao e logistica.
+
+### Almoxarifado / Armazem
+
+Unidade logistica pertencente a uma Planta, responsavel por agrupar Areas e Localizacoes de Estoque.
+
+No codigo atual, o cadastro legado existe como `Almoxarifado`/`CALMOXARIFADO`. O vinculo com Planta ainda nao esta implementado.
+
+### WarehouseId
+
+Identidade operacional equivalente ao `AlmoxarifadoId`. Nao representa cadastro independente.
+
+### PlantId
+
+Identidade da Planta, derivada por meio da associacao do Almoxarifado.
+
+Para `LocalizacaoEstoque`, `PlantId` deve ser derivado por `LocalizacaoEstoque -> Almoxarifado -> Planta`, sem repeticao manual em cada localizacao.
 ### Area de Estoque
 
 **Definicao**
@@ -852,6 +885,18 @@ Estrutura opcional em que uma Unidade Logistica pode conter outras ULs, como pal
 
 Historico de origem, agrupamento, desagrupamento, divisao e consolidacao de Unidades Logisticas.
 
+### Identidade unica de Localizacao de Estoque
+
+Decisao arquitetural de usar `LocalizacaoEstoque`/`CLOCALIZACAOESTOQUE` como identidade unica fisica e operacional dos enderecos de estoque, eliminando publicacao e sincronizacao com `LocalDeEstoque`/`CLOCALDEESTOQUE`.
+
+Referencia: `../12 - Decision Log/DL-0044 - LocalizacaoEstoque como Identidade Unica Fisica e Operacional.md`.
+
+### Elegibilidade operacional de Localizacao de Estoque
+
+Regra que define se uma `LocalizacaoEstoque` pode receber Unidade Logistica ou ser origem/destino de movimentacao.
+
+Somente classificacao efetiva `ARMAZENA` e elegivel. `ESTRUTURAL` e `BLOQUEADO` nao sao elegiveis.
+
 ## 5. Relacoes entre os Principais Conceitos
 
 ```text
@@ -897,6 +942,8 @@ Estrutura de Produto
 
 ### Architecture Sessions
 
+- `../15 - Architecture Sessions/AS-0010 - Unificacao da Identidade Fisica e Operacional dos Locais de Estoque.md`
+- `../15 - Architecture Sessions/AS-0009 - Modelo de Planta Armazem e Estrutura Fisica Industrial.md`
 - `../15 - Architecture Sessions/AS-0001 - Arquitetura de Enderecamento e Localizacao de Estoque.md`
 - `../15 - Architecture Sessions/AS-0002 - Movimentacoes de Estoque e Operacao Assistida.md`
 - `../15 - Architecture Sessions/AS-0003 - Arquitetura de Integracao Sincronizacao Governanca e Eventos.md`

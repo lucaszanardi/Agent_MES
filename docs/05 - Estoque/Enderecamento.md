@@ -27,6 +27,8 @@ A tela de Cadastro de Locais de Estoque em `FRONTEND/src/app/application/cadastr
 
 Comportamento pos-salvamento documentado: manter Armazem e Area selecionados, recarregar a hierarquia, selecionar o local salvo e manter a tela em modo de edicao. Nao ha sincronizacao automatica entre `LocalizacaoEstoque` legado e `LocalDeEstoque` da nova vertical (`CLOCALDEESTOQUE`).
 
+Nota de arquitetura - Planta aprovada: AS-0009 e DL-0043 definem que `Almoxarifado` representa Armazem/Warehouse e que `WarehouseId` equivale a `AlmoxarifadoId`. `PlantId` deve ser derivado por `LocalizacaoEstoque -> Almoxarifado -> Planta`, sem repeticao manual em cada localizacao. A implementacao do vinculo `Almoxarifado -> Planta` permanece pendente.
+
 ## Listagem paginada do cadastro legado de locais - 2026-07-29
 
 Implementacao comprovada em `BACKEND/PRPA/PRPA/Controllers/LocalizacaoEstoqueController.cs`, `BACKEND/PRPA/App.Service/Services/LocalizacaoEstoque/Consultas/LocalizacaoEstoqueConsultaContracts.cs`, `BACKEND/PRPA/App.Infra.Data/Persistence/LocalizacaoEstoque/LocalizacaoEstoqueConsultaService.cs` e `FRONTEND/src/app/application/cadastro/localizacaoestoque/**`.
@@ -94,3 +96,11 @@ Apos salvar novo local ou edicao, a tela recarrega a hierarquia da Area atual, s
 A volta para `/home/cadastro/locais-estoque` e uma acao explicita por `Voltar para lista`, preservando query params de Armazem, Area, pagina, pageSize e filtros quando recebidos da grid.
 
 Alteracoes nao salvas passam a solicitar confirmacao antes de selecionar outro no, adicionar filho/irmao, trocar contexto, cancelar ou voltar para a lista. Nao houve alteracao em backend, migration, `LocalDeEstoque`, `UnidadeLogistica`, `MovimentacaoDeEstoque` ou `SaldoEstoque`.
+
+## Identidade unica operacional - AS-0010
+
+`LocalizacaoEstoque` passa a ser a identidade unica fisica e operacional dos enderecos de estoque. O cadastro hierarquico deixa de ser etapa apenas cadastral e passa a ser a fonte conceitual para posicionamento de UL e origem/destino de movimentacoes.
+
+A elegibilidade operacional continua derivada da classificacao efetiva: apenas `ARMAZENA` pode armazenar. Localizacoes `ESTRUTURAL` ou `BLOQUEADO` nao podem receber UL nem participar de movimentacao.
+
+Antes de adicionar filho sob localizacao `ARMAZENA`, a implementacao futura devera validar ausencia de UL, saldo, movimentacao ativa, reserva, inventario em andamento e bloqueio operacional incompativel.

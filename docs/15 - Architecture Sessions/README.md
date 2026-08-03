@@ -26,10 +26,12 @@ Uma Architecture Session consolida o contexto, os problemas analisados, alternat
 | AS-0006 | Avaliacao de Prontidao Tecnica para Implementacao da Primeira Vertical de Estoque | 2026-07-24 | Concluida | Nao gera Decision Log |
 | AS-0007 | Arquitetura Tecnica da Primeira Vertical Funcional de Estoque | 2026-07-24 | Concluida | DL-0033, DL-0034, DL-0035, DL-0036, DL-0037 |
 | AS-0008 | Finalidade Configurada e Classificacao Efetiva dos Locais de Estoque Legados | 2026-07-31 | Concluida | DL-0042 |
+| AS-0009 | Modelo de Planta, Armazem e Estrutura Fisica Industrial | 2026-08-03 | Concluida | DL-0043 |
+| AS-0010 | Unificacao da Identidade Fisica e Operacional dos Locais de Estoque | 2026-08-03 | Concluida | DL-0044 |
 
 Proxima etapa planejada:
 
-Implementar o primeiro incremento de codigo recomendado pela AS-0007: nucleo de dominio de UnidadeLogistica e MovimentacaoDeEstoque com testes unitarios, sem API publica e sem migrations.
+Planejar a refatoracao tecnica para usar `LocalizacaoEstoque` como identidade unica, preservando idempotencia, concorrencia, reservas e outbox, sem remover `CLOCALDEESTOQUE` antes da migracao controlada.
 
 ## Arquivos
 
@@ -42,3 +44,6 @@ Implementar o primeiro incremento de codigo recomendado pela AS-0007: nucleo de 
 - `AS-0007 - Arquitetura Tecnica da Primeira Vertical Funcional de Estoque.md`
 - `AS-0008 - Finalidade Configurada e Classificacao Efetiva dos Locais de Estoque Legados.md`
 
+
+- `AS-0009 - Modelo de Planta Armazem e Estrutura Fisica Industrial.md`
+- `AS-0010 - Unificacao da Identidade Fisica e Operacional dos Locais de Estoque.md`

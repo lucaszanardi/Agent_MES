@@ -197,6 +197,10 @@ Temas futuros:
 
 Status: Planejada para Domain Discovery.
 
+Dependencia arquitetural aprovada:
+
+- Usar AS-0009 e DL-0043 como base para vincular centros de trabalho, linhas, celulas, maquinas, ordens ou apontamentos a Planta em modelagem futura de Producao.
+
 Temas futuros:
 
 - ordens de producao;
@@ -315,4 +319,6 @@ Gestao da Producao
 - Este roadmap nao autoriza implementacao.
 - Este roadmap nao substitui Architecture Sessions ou Decision Logs.
 
+## Dependencia - Identidade unica de LocalizacaoEstoque
 
+AS-0010 e DL-0044 devem orientar a proxima refatoracao tecnica de Estoque: usar `LocalizacaoEstoque` como identidade unica, preservar garantias operacionais da nova vertical e remover `CLOCALDEESTOQUE` somente em etapa futura controlada.

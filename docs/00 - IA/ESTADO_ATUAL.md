@@ -223,6 +223,18 @@ Legenda: **Confirmado** = identificado diretamente em código/configuração; **
 | Cobertura de testes | arquivos `.spec.ts`, ausência de testes backend identificados | não foram executados testes | Não identificado |
 | Migrations aplicadas em produção | `App.Infra.Data/Migrations`, `PRPA/Migrations` | arquivos existem, aplicação real não confirmada | Não identificado |
 
+## Auditoria arquitetural - Planta, Armazem e Estrutura Fisica Industrial - 2026-08-03
+
+AS-0009 foi concluida e DL-0043 foi criada com status `Aprovado`.
+
+Decisao aprovada: Planta e a unidade fisica superior de operacao industrial ou logistica, pertencente a uma Empresa, podendo ser Industrial, Logistica ou Mista. Planta agrupa Almoxarifados/Armazens, areas produtivas, linhas, recursos e areas mistas.
+
+`Almoxarifado`/`CALMOXARIFADO` permanece como Armazem/Warehouse. `WarehouseId` equivale a `AlmoxarifadoId` e nao representa cadastro independente. `PlantId` deve ser derivado pela associacao do Almoxarifado, sem repeticao manual em `LocalizacaoEstoque`.
+
+Estado tecnico: entidade Planta, tabela de Planta, vinculo `Almoxarifado -> Planta`, migration, backfill, backend e frontend ainda nao foram implementados/alterados por esta decisao documental.
+
+A decisao sobre manter, integrar ou eliminar `CLOCALDEESTOQUE` permanece pendente em Architecture Session especifica.
+
 ## Arquivos analisados de maior relevância
 
 - `AGENTS.md`
@@ -395,3 +407,15 @@ Apos salvar novo local ou edicao, a tela recarrega a hierarquia da Area atual, s
 A volta para `/home/cadastro/locais-estoque` e uma acao explicita por `Voltar para lista`, preservando query params de Armazem, Area, pagina, pageSize e filtros quando recebidos da grid.
 
 Alteracoes nao salvas passam a solicitar confirmacao antes de selecionar outro no, adicionar filho/irmao, trocar contexto, cancelar ou voltar para a lista. Nao houve alteracao em backend, migration, `LocalDeEstoque`, `UnidadeLogistica`, `MovimentacaoDeEstoque` ou `SaldoEstoque`.
+
+## Decisao arquitetural - Identidade unica de LocalizacaoEstoque - 2026-08-03
+
+AS-0010 foi criada com status `Concluida` e DL-0044 foi criada com status `Aprovado`.
+
+Decisao aprovada: `LocalizacaoEstoque`/`CLOCALIZACAOESTOQUE` sera a identidade unica fisica e operacional dos enderecos de estoque. `LocalDeEstoque`/`CLOCALDEESTOQUE` deixa de ser identidade operacional independente e sera descontinuado em transicao futura.
+
+Estado informado: `CLOCALIZACAOESTOQUE` possui 18 registros; `CLOCALDEESTOQUE`, `CUNIDADELOGISTICA` e `CMOVIMENTACAODEESTOQUE` possuem 0 registros. Nao ha dados operacionais para migrar.
+
+A remocao fisica de `CLOCALDEESTOQUE` nao foi realizada e dependera de refatoracao completa, migration incremental, revisao SQL, testes e validacao humana.
+
+Nenhum backend, frontend, migration, snapshot ou banco de dados foi alterado nesta atualizacao documental.

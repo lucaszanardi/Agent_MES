@@ -667,3 +667,17 @@ Validacao local realizada em 2026-07-28 para a migration `20260727170707_CreateF
 | Banco demo hospedado | nao inspecionado nesta execucao por ausencia das variaveis `MES_DEMO_DB_*` e do gate `MES_DEMO_CONFIRMATION=DEMO_DATABASE_CONFIRMED`. |
 | Aplicacao da migration | nao executada; nenhum `database update`, DDL remoto, `Down` ou alteracao de dados foi realizado. |
 | Bloqueios para aplicar | confirmar banco exclusivo de demonstracao, variaveis seguras, backup/restauracao, usuario/permissoes e estado de `__EFMigrationsHistory`. |
+
+## Revisao arquitetural posterior - Identidade unica de LocalizacaoEstoque - 2026-08-03
+
+AS-0010 e DL-0044 substituem parcialmente a direcao deste contrato quanto ao uso futuro de `CLOCALDEESTOQUE` como identidade operacional independente.
+
+Direcao aprovada posteriormente:
+
+- `CLOCALIZACAOESTOQUE` sera a fonte de verdade fisica e operacional dos enderecos de estoque;
+- `LocalDeEstoque`/`CLOCALDEESTOQUE` sera descontinuado como identidade operacional independente;
+- `CUNIDADELOGISTICA` e `CMOVIMENTACAODEESTOQUE` deverao referenciar `LocalizacaoEstoque` em implementacao futura;
+- idempotencia, concorrencia, reserva transacional e outbox devem ser preservadas;
+- a remocao fisica de `CLOCALDEESTOQUE` so podera ocorrer depois de refatoracao completa, testes, revisao SQL e validacao humana.
+
+Este registro e documental. Nenhuma migration, banco, backend ou frontend foi alterado nesta atualizacao.

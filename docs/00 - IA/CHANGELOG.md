@@ -1,6 +1,27 @@
 - Implementada a consulta operacional read-only da nova vertical de Estoque: `GET /api/estoque/unidades-logisticas`, `GET /api/estoque/unidades-logisticas/{id}`, `GET /api/estoque/unidades-logisticas/{id}/movimentacoes`, `GET /api/estoque/locais`, `GET /api/estoque/locais/{id}` e `GET /api/estoque/locais/{id}/unidades-logisticas`; frontend com rotas `/operacao/unidades-logisticas` e `/operacao/locais-estoque`, integradas a `/operacao/movimentacaoestoque-nova` para preencher UL, versao esperada, origem e destino; sem migration, sem database update, sem escrita em legado e sem uso de `MovimentoEstoque`/`LocalizacaoEstoque` como autoridade.
 # Changelog do Project Book
 
+## 2026-08-03 - Identidade unica de LocalizacaoEstoque
+
+- Criada a AS-0010 (`Unificacao da Identidade Fisica e Operacional dos Locais de Estoque`) com status `Concluida`.
+- Criada a DL-0044 (`LocalizacaoEstoque como Identidade Unica Fisica e Operacional`) com status `Aprovado`.
+- Criado o contrato documental `docs/05 - Estoque/Contrato de Transicao para Identidade Unica de Localizacao de Estoque.md`.
+- Formalizado que `CLOCALIZACAOESTOQUE` sera a fonte de verdade fisica e operacional dos enderecos de estoque.
+- Formalizado que apenas classificacao efetiva `ARMAZENA` e elegivel para UL e movimentacao; `ESTRUTURAL` e `BLOQUEADO` nao sao elegiveis.
+- Formalizado que `CLOCALDEESTOQUE` sera descontinuada, mas sua remocao fisica sera posterior e controlada.
+- Nenhum backend, frontend, migration, snapshot, banco, commit ou push foi alterado/executado.
+
+## 2026-08-03
+
+- Concluida a AS-0009 (`Modelo de Planta, Armazem e Estrutura Fisica Industrial`).
+- Criada a DL-0043 (`Planta como Escopo Superior de Producao, Armazens e Estoque`) com status `Aprovado`.
+- Formalizado que Planta e a unidade fisica superior de operacao industrial ou logistica, com tipos Industrial, Logistica e Mista.
+- Formalizado que `WarehouseId` equivale a `AlmoxarifadoId` e nao cria cadastro separado de Warehouse.
+- Formalizado que `PlantId` deve ser derivado pela associacao do Almoxarifado, sem repeticao manual em `LocalizacaoEstoque`.
+- Registrado que a decisao sobre manter, integrar ou eliminar `CLOCALDEESTOQUE` fica fora da AS-0009 e deve ser tratada em sessao propria.
+- Atualizados AS, Decision Log, modelo conceitual, modelo logico, entidades, relacionamentos, dicionario de dados, glossario, estoque, producao, roadmap e estado atual somente em documentacao.
+- Nenhum backend, frontend, migration, snapshot, banco, commit ou push foi alterado/executado.
+
 ## 2026-07-28
 
 - Refatorada a experiencia visual do frontend da primeira vertical funcional de Estoque em `FRONTEND/src/app/application/operacao/movimentacaoestoque-nova/**`, mantendo a rota `/operacao/movimentacaoestoque-nova` e organizando a operacao em abas, etapas de criacao, revisao, resultado e confirmacao; sem alterar backend, migrations ou menu no banco.

@@ -1,4 +1,4 @@
-﻿# Entidades
+# Entidades
 
 Fonte oficial usada nesta leitura: BACKEND. Este documento registra somente entidades encontradas no codigo.
 
@@ -78,3 +78,32 @@ Semantica implementada: local com filhos e sempre estrutural e nao recebe armaze
 Ao criar filho, o pai passa a ser classificado como estrutural por possuir filhos. Ao excluir filho, a classificacao do pai e recalculada nas proximas leituras; a exclusao de localizacao que ainda possui filhos e bloqueada no service legado.
 
 Diagnostico de dados: nao foi executada correcao automatica nem script de banco. Inconsistencias existentes devem ser avaliadas por consulta read-only antes de qualquer normalizacao operacional.
+
+## Planta, Armazem e Estrutura Fisica Industrial
+
+Referencias: AS-0009 e DL-0043.
+
+| Conceito | Entidade/tabela atual | Estado |
+|---|---|---|
+| Planta | Nao implementada | Conceito aprovado; entidade/tabela pendente. |
+| Tipo de Planta | Nao implementado | Tipos aprovados: Industrial, Logistica e Mista. |
+| Armazem/Almoxarifado | `Almoxarifado` / `CALMOXARIFADO` | Confirmado como Warehouse; todo novo registro devera pertencer a Planta quando implementado. |
+| Area de Estoque | `AreaEstoque` / `CAREAESTOQUE` | Confirmada como subdivisao de armazem. |
+| Localizacao de Estoque | `LocalizacaoEstoque` / `CLOCALIZACAOESTOQUE` | Confirmada como hierarquia fisica legada; `PlantId` futuro deve ser derivado pelo Almoxarifado. |
+| Local de Estoque | `LocalDeEstoque` / `CLOCALDEESTOQUE` | Fora da decisao de manutencao, integracao ou eliminacao nesta AS. |
+| Centro de Trabalho | `CentroTrabalho` / `CENTROSDETRABALHO` | Deve pertencer funcionalmente a Planta em decisao futura de Producao. |
+
+A criacao de entidade Planta, tipo de Planta, FK, migration, DTOs, services, controllers ou telas permanece pendente de tarefa tecnica futura.
+
+## Identidade Unica de Localizacao de Estoque
+
+Referencias: AS-0010 e DL-0044.
+
+| Entidade/tabela | Decisao documental |
+|---|---|
+| `LocalizacaoEstoque` / `CLOCALIZACAOESTOQUE` | Identidade unica fisica e operacional; fonte de verdade. |
+| `LocalDeEstoque` / `CLOCALDEESTOQUE` | Descontinuada como identidade operacional independente; remocao fisica futura. |
+| `UnidadeLogistica` / `CUNIDADELOGISTICA` | Devera referenciar `LocalizacaoEstoque`. |
+| `MovimentacaoDeEstoque` / `CMOVIMENTACAODEESTOQUE` | Devera usar origem/destino em `LocalizacaoEstoque`. |
+
+A implementacao permanece pendente. Nenhum backend, frontend, migration ou banco foi alterado por esta decisao documental.

@@ -1,4 +1,4 @@
-﻿# Decision Log
+# Decision Log
 
 Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 
@@ -56,6 +56,8 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 | DL-0040 | Identificadores e Retencao Operacional da Persistencia de Estoque | Aprovado com ressalvas operacionais | AS-0007 |
 | DL-0041 | Transicao do Legado de Localizacao para Local de Estoque MES | Aprovado | AS-0007 |
 | DL-0042 | Finalidade de Armazenagem por Localizacao de Estoque Legada | Aprovado | AS-0008 |
+| DL-0043 | Planta como Escopo Superior de Producao, Armazens e Estoque | Aprovado | AS-0009 |
+| DL-0044 | LocalizacaoEstoque como Identidade Unica Fisica e Operacional | Aprovado | AS-0010 |
 
 
 ## Arquivos
@@ -102,4 +104,5 @@ Esta pasta registra decisoes arquiteturais aprovadas para o projeto MES/MOM.
 - `DL-0040 - Identificadores e Retencao Operacional da Persistencia de Estoque.md`
 - `DL-0041 - Transicao do Legado de Localizacao para Local de Estoque MES.md`
 - `DL-0042 - Finalidade de Armazenagem por Localizacao de Estoque Legada.md`
-
+- `DL-0043 - Planta como Escopo Superior de Producao Armazens e Estoque.md`
+- `DL-0044 - LocalizacaoEstoque como Identidade Unica Fisica e Operacional.md`

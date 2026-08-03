@@ -32,3 +32,32 @@ Semantica implementada: local com filhos e sempre estrutural e nao recebe armaze
 Ao criar filho, o pai passa a ser classificado como estrutural por possuir filhos. Ao excluir filho, a classificacao do pai e recalculada nas proximas leituras; a exclusao de localizacao que ainda possui filhos e bloqueada no service legado.
 
 Diagnostico de dados: nao foi executada correcao automatica nem script de banco. Inconsistencias existentes devem ser avaliadas por consulta read-only antes de qualquer normalizacao operacional.
+
+## Planta, Armazem e Estrutura Fisica Industrial
+
+Referencias: AS-0009 e DL-0043.
+
+| Termo/campo | Definicao aprovada | Estado tecnico |
+|---|---|---|
+| Planta | Unidade fisica superior de operacao industrial ou logistica, pertencente a uma Empresa e responsavel por agrupar Armazens, areas produtivas, linhas, recursos e areas mistas. | Conceito aprovado; nao implementado. |
+| Planta Industrial | Planta que possui processos produtivos. | Tipo aprovado; nao implementado. |
+| Planta Logistica | Planta dedicada principalmente a armazenagem, distribuicao ou operacao logistica, sem obrigacao de possuir linhas de producao. | Tipo aprovado; nao implementado. |
+| Planta Mista | Planta que combina producao e logistica. | Tipo aprovado; nao implementado. |
+| Almoxarifado / Armazem | Unidade logistica pertencente a uma Planta, responsavel por agrupar Areas e Localizacoes de Estoque. | Cadastro legado existente em `CALMOXARIFADO`; vinculo com Planta pendente. |
+| `WarehouseId` | Identidade operacional equivalente ao `AlmoxarifadoId`. Nao representa cadastro independente. | Campo ja usado na nova vertical; alinhamento definitivo depende de implementacao futura. |
+| `PlantId` | Identidade da Planta, derivada por meio da associacao do Almoxarifado. | Campo ja usado na nova vertical; cadastro de Planta ainda pendente. |
+
+Nenhuma migration, database update ou alteracao funcional foi executada por esta documentacao.
+
+## Identidade Unica de Localizacao de Estoque
+
+Referencias: AS-0010 e DL-0044.
+
+| Termo | Definicao |
+|---|---|
+| Identidade unica de localizacao | Decisao de usar `LocalizacaoEstoque`/`CLOCALIZACAOESTOQUE` como unico endereco fisico e operacional. |
+| Elegibilidade operacional | Capacidade de uma localizacao receber UL ou participar de movimentacao; exige classificacao efetiva `ARMAZENA`. |
+| Localizacao estrutural | Localizacao com filhos ou folha com finalidade estrutural; nao recebe estoque. |
+| Localizacao bloqueada | Localizacao impedida operacionalmente; nao recebe estoque e nao participa de movimentacao. |
+| `LocalizacaoEstoqueId` | Nome logico recomendado para referencia futura de UL a `LocalizacaoEstoque`. |
+| `LocalizacaoOrigemId` / `LocalizacaoDestinoId` | Nomes logicos recomendados para referencias futuras de movimentacao a `LocalizacaoEstoque`. |

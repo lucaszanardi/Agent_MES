@@ -1,4 +1,4 @@
-﻿# Relacionamentos
+# Relacionamentos
 
 Fonte oficial usada nesta leitura: BACKEND. Este documento descreve somente relacionamentos encontrados em entidades, configuracoes do Entity Framework ou contexto.
 
@@ -104,3 +104,39 @@ Semantica implementada: local com filhos e sempre estrutural e nao recebe armaze
 Ao criar filho, o pai passa a ser classificado como estrutural por possuir filhos. Ao excluir filho, a classificacao do pai e recalculada nas proximas leituras; a exclusao de localizacao que ainda possui filhos e bloqueada no service legado.
 
 Diagnostico de dados: nao foi executada correcao automatica nem script de banco. Inconsistencias existentes devem ser avaliadas por consulta read-only antes de qualquer normalizacao operacional.
+
+## Planta, Armazem e Estrutura Fisica Industrial
+
+Referencias: AS-0009 e DL-0043.
+
+Relacionamentos aprovados:
+
+| Relacionamento | Cardinalidade/Regra |
+|---|---|
+| Empresa -> Planta | 1:N. |
+| Planta -> Almoxarifado | 1:N; uma Planta pode possuir zero ou mais Almoxarifados, mas todo novo Almoxarifado devera pertencer a uma Planta. |
+| Almoxarifado legado -> Planta | Vinculo temporariamente opcional durante transicao e backfill; obrigatorio apos transicao. |
+| Almoxarifado -> AreaEstoque | 1:N, ja implementado em `CAREAESTOQUE`. |
+| AreaEstoque -> LocalizacaoEstoque | 1:N, ja representado no legado. |
+| Planta -> Linha de Producao | 1:N, a detalhar no modulo de Producao. |
+| Linha -> Recursos | 1:N, conforme decisao futura do modulo de Producao. |
+
+`WarehouseId` equivale a `AlmoxarifadoId`; nao deve existir cadastro separado de Warehouse. `PlantId` deve ser derivado via Almoxarifado e nao repetido manualmente em `LocalizacaoEstoque`.
+
+`CLOCALDEESTOQUE` permanece fora da decisao desta AS.
+
+## Identidade Unica de Localizacao de Estoque
+
+Referencias: AS-0010 e DL-0044.
+
+Relacionamentos alvo:
+
+| Relacionamento | Regra |
+|---|---|
+| `Almoxarifado -> LocalizacaoEstoque` | Ja existe no legado e passa a sustentar o escopo operacional. |
+| `AreaEstoque -> LocalizacaoEstoque` | Ja existe no legado e preserva o contexto hierarquico. |
+| `UnidadeLogistica -> LocalizacaoEstoque` | Devera substituir a referencia operacional a `LocalDeEstoque`. |
+| `MovimentacaoDeEstoque -> LocalizacaoEstoque` | Origem e destino deverao referenciar `LocalizacaoEstoque`. |
+| `LocalizacaoEstoque -> Planta` | Derivada por `Almoxarifado -> Planta`, sem `PlantId` repetido no local. |
+
+`CLOCALDEESTOQUE` nao devera participar de sincronizacao ou publicacao. Sua remocao fisica sera posterior e controlada.
