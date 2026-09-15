@@ -64,3 +64,79 @@ Legenda: **Confirmado** = encontrado em arquivo de codigo; **Provavel** = indica
 | Atualizacao automatica de saldo a partir de operacoes de estoque nao foi confirmada nesta leitura. | Entidades e telas existem, mas a regra transacional completa nao foi identificada nos arquivos analisados. | Nao identificado |
 | Catalogos para status/tipo/motivo de movimentos, reservas, lotes e documentos nao foram identificados como entidades. | Campos aparecem em entidades como `MovimentoEstoque.cs`, `ReservaEstoque.cs`, `LoteMaterial.cs` e `RecebimentoEstoque.cs`. | Nao identificado |
 | Integracao com ERP/WMS externo para estoque nao foi encontrada no codigo analisado. | Busca em controllers, services e environments nao confirmou endpoint externo de ERP/WMS. | Nao identificado |
+
+## Entrada Direta (EST-OP-02C)
+
+| Item | Evidencia | Classificacao |
+|---|---|---|
+| Entrada Direta — sincroniza MovimentoEstoque + SaldoEstoque atomicamente | `BACKEND/PRPA/App.Service/Services/EntradaDiretaSincronizacaoServices.cs` | Confirmado |
+| Conversão de unidade (mesma / produto / global) aplicada na entrada | `BACKEND/PRPA/App.Service/Services/EntradaDiretaSincronizacaoServices.cs` | Confirmado |
+| Rollback transacional via `IUnitOfWork.ExecuteAsync` | `BACKEND/PRPA/PRPA/Controllers/MovimentoEstoqueController.cs` | Confirmado |
+| Entrada com Unidade Logística (UL) opcional | `BACKEND/PRPA/App.Service/Services/EntradaDiretaSincronizacaoServices.cs` (linha 78-135) | Confirmado |
+| Contrato de resposta enxuto: `EntradaDiretaResponseDto` | `BACKEND/PRPA/App.Service/DTOs/MovimentoEstoque/EntradaDiretaResponseDto.cs` | Confirmado |
+| Contrato inclui: `movimentoId`, `unidadeLogisticaId`, `unidadeLogisticaCodigo`, `statusQualidade` | `EntradaDiretaResponseDto.cs` | Confirmado |
+| Frontend recebe tipos primitivos; não recebe entidades de domínio completas | `FRONTEND/src/app/application/operacao/entradaestoque/components/entradaestoque/entradaestoque.component.ts` | Confirmado |
+| Mensagem pós-entrada exibe: Movimento ID, UL ID, Código UL, Status Quarentena | `entradaestoque.component.ts` (showSuccessMessage) | Confirmado |
+| Botões pós-entrada: "Ver Movimento" (usa movimentoId), "Ver UL" (usa unidadeLogisticaId) | `entradaestoque.component.ts` | Confirmado |
+| Correção histórica de `[object Object]` causada por exposição de Value Objects no contrato | `EST-OP-02C.3-D1.20.6` e `EST-OP-02C.3-D1.20.7` | Confirmado |
+| Dívida técnica: `MovimentoEstoqueService.cadastrarMovimentoEstoque` tipado como `any` temporariamente | `movimentoestoque.service.ts` | Confirmado |
+
+## Identidade da Unidade Logística
+
+| Item | Evidencia | Classificacao |
+|---|---|---|
+| `CUNIDADELOGISTICA.Id` gerado pelo banco (AUTO_INCREMENT) | `BACKEND/PRPA/App.Infra.Data/Mapping/Estoque/UnidadeLogisticaConfig.cs` | Confirmado |
+| EF Core: `ValueGeneratedOnAdd()` | `UnidadeLogisticaConfig.cs` | Confirmado |
+| `UnidadeLogisticaId.Create(0)` permanece INVÁLIDO (domain exception) | `BACKEND/PRPA/App.Domain/Entities/Estoque/Shared/ValueObjects.cs` | Confirmado |
+| Estado transiente da entidade nova tratado separadamente do ID persistido | `EntradaDiretaSincronizacaoServices.cs` (linha 119-134) | Confirmado |
+| Migration corretiva: `FixUnidadeLogisticaIdentity` | `BACKEND/PRPA/App.Infra.Data/Migrations/20260911112709_FixUnidadeLogisticaIdentity.cs` | Confirmado |
+| Remediação: UL antiga Id 0 → Id positivo; referência em `CMOVIMENTOESTOQUE` preservada | Migration designer + SQL | Confirmado |
+
+## ExigeInspecao e Qualidade
+
+| Item | Evidencia | Classificacao |
+|---|---|---|
+| `Produto.ExigeInspecao` (bool) configurável no cadastro | `BACKEND/PRPA/App.Domain/Entities/PRPA/Produto.cs` | Confirmado |
+| DTOs persistem: `ProdutoCreateDto`, `ProdutoUpdateDto` | `BACKEND/PRPA/App.Service/DTOs/Produto/` | Confirmado |
+| Regra: ExigeInspecao=false → `StatusQualidade = Liberado` | `EntradaDiretaSincronizacaoServices.cs` (linha 72) | Confirmado |
+| Regra: ExigeInspecao=true → `StatusQualidade = EmQuarentena` | `EntradaDiretaSincronizacaoServices.cs` (linha 72) | Confirmado |
+| Saldo em Quarentena: físico AUMENTA; disponível NÃO AUMENTA | `EntradaDiretaSincronizacaoServices.cs` (linha 144-149) | Confirmado |
+| Consumo não pode utilizar saldo em Quarentena | Regras de domínio / `SaldoEstoque` | Confirmado |
+
+## Finalidade Operacional dos Locais de Estoque
+
+| Item | Evidencia | Classificacao |
+|---|---|---|
+| Hierarquia: LocalizacaoEstoque → AreaEstoque → TipoAreaEstoque → FinalidadeOperacional | `BACKEND/PRPA/App.Domain/Entities/PRPA/` | Confirmado |
+| `FinalidadeOperacional` é ENUM | `BACKEND/PRPA/App.Domain/Entities/Estoque/Shared/ValueObjects.cs` | Confirmado |
+| Valores: Armazenagem, Quarentena, Refugo, Picking, Recebimento, Expedicao, Producao, Outro | ValueObjects.cs | Confirmado |
+| Quarentena determinada APENAS por FinalidadeOperacional (não por nome/flag) | `LocalizacaoEstoqueServices.cs` / Domain | Confirmado |
+| NÃO existe flag `EhQuarentena` em LocalizacaoEstoque | Confirmado por ausência | Confirmado |
+| Migration: `AddFinalidadeOperacionalToTipoAreaEstoque` | `BACKEND/PRPA/App.Infra.Data/Migrations/20260914193821_AddFinalidadeOperacionalToTipoAreaEstoque.cs` | Confirmado |
+| Remediação inicial: MP-01/PRA-01 → Armazenagem; REF-001 → Refugo; QUA-01 → Quarentena; PI-001 → Picking | Migration SQL | Confirmado |
+
+## Validação de Quarentena na Entrada
+
+| Cenário | Resultado | Evidencia |
+|---|---|---|
+| Produto ExigeInspecao=true + localização não Quarentena | BLOQUEAR | `EntradaDiretaSincronizacaoServices.cs` |
+| Produto ExigeInspecao=true + localização Quarentena | PERMITIR | `EntradaDiretaSincronizacaoServices.cs` |
+| Produto ExigeInspecao=false + localização Quarentena | BLOQUEAR | `EntradaDiretaSincronizacaoServices.cs` |
+| Produto ExigeInspecao=false + localização normal | PERMITIR | `EntradaDiretaSincronizacaoServices.cs` |
+| Erros de negócio lançam `DomainException` (mensagem amigável) | DomainException | Confirmado |
+
+## Tratamento de Erros
+
+| Item | Evidencia | Classificacao |
+|---|---|---|
+| Erros de negócio: mensagem operacional amigável | `ExceptionMiddleware` / Services | Confirmado |
+| Frontend NÃO recebe: stack trace, inner exception, path físico, SQL, assembly | `ExceptionMiddleware` / Controllers | Confirmado |
+| ExceptionMiddleware separa: erro de negócio vs erro técnico | `BACKEND/PRPA/PRPA/Middleware/ExceptionMiddleware.cs` | Confirmado |
+
+## Próxima Fase
+
+| Item | Status |
+|---|---|
+| Próxima prioridade funcional: **MAPA DE ESTOQUE** | Definido em `MES-PROJECTBOOK-UPDATE-01` |
+| Fase: `EST-OP-02C.4-AUDIT` — Levantamento de arquitetura e dados existentes | Registrado |
+| Gestão de capacidade/ocupação permanece no backlog (NÃO é próxima fase) | Confirmado |
