@@ -1,5 +1,128 @@
 # Histórico de Execuções - Projeto MES
 
+## 2026-10-02 — Entrada de Estoque — Escopo de Almoxarifado/Localização/Unidade Logística Corrigido
+
+- **Tela:** Entrada de Estoque (`/operacao/entradaestoque`)
+- **Problema:** Hardcode `warehouseId = 1` na criação de Unidades Logísticas causava divergência entre o WarehouseId da UL e o almoxarifado real da localização, afetando 15 das 16 ULs existentes e consequentemente o Mapa do Estoque.
+- **Causa Raiz:** 
+  - `BACKEND/PRPA/App.Service/Services/EntradaDiretaSincronizacaoServices.cs:97` definia `warehouseId = 1` fixamente
+  - Faltava validação de compatibilidade entre Localização → Área → Almoxarifado
+- **Correções Realizadas:**
+
+### 1. Hardcode Removido
+- **Arquivo:** `BACKEND/PRPA/App.Service/Services/EntradaDiretaSincronizacaoServices.cs`
+- **Antes (linha 97):** `int warehouseId = 1;`
+- **Depois (linha 97):** `int warehouseId = localDestino.almoxarifadoid;` (derivado da localização selecionada)
+- **Regra:** WarehouseId da UL é agora derivado do almoxarifado real da localização, nunca hardcoded.
+
+### 2. Validação de Escopo Implementada
+- **Arquivo:** `BACKEND/PRPA/App.Service/Services/EntradaDiretaSincronizacaoServices.cs` (linhas 315-325)
+- **Validações Adicionadas:**
+  1. Localização deve pertencer ao Almoxarifado selecionado (linha 316-317)
+  2. Área (se existe) deve pertencer ao Almoxarifado selecionado (linha 322-325)
+  3. Se Área for nula → exceção (linha 323)
+- **Comportamento:** Rejeita operação ANTES de qualquer gravação se houver divergência.
+
+### 3. Testes Criados/Completados
+- **Arquivo:** `BACKEND/PRPA/App.Domain.Tests/EntradaEstoqueEscopoTests.cs`
+- **Total de Testes:** 20 (todos aprovados)
+- **Cobertura:**
+  - A: Entrada Direta (Estoque Direto) — preservada ✓
+  - B: Entrada via UL em Almoxarifado 11 — WarehouseId correto ✓
+  - C: Entrada via UL em Almoxarifado 12 — WarehouseId derivado corretamente ✓
+  - D: Localização incompatível (outro almoxarifado) — rejeitada antes de gravação ✓
+  - E: Área incompatível (outro almoxarifado) — rejeitada antes de gravação ✓
+  - F: Produto sem controle de lote — permitido ✓
+  - G: Produto com controle de lote e lote válido — permitido ✓
+  - H: Produto com controle de lote sem lote — rejeitado ✓
+  - I: Lote inválido (inexistente, outro produto, inativo) — rejeitado ✓
+  - J: Contexto inexistente (local, área, almoxarifado, produto) — rejeitado ✓
+  - K: Quantidade não positiva — rejeitado ✓
+  - L: **Teste de regressão:** WarehouseId deve ser igual ao almoxarifado real, não 1 — PASSA ✓
+
+### 4. Testes e Build
+- `dotnet test App.Domain.Tests\App.Domain.Tests.csproj --filter "EntradaEstoqueEscopoTests"`
+  - **Resultado:** 20/20 aprovados ✓
+- `dotnet build PRPA.sln`
+  - **Resultado:** 0 erros, 4 avisos (preexistentes) ✓
+
+### 5. Dados Existentes (Auditoria Somente Leitura)
+- **Script SQL:** `audit_unidades_logisticas.sql` criado em `BACKEND/PRPA/`
+- **Execução:** Pendente (requer acesso ao banco de dados)
+- **Objetivo:** Contar ULs coerentes vs incoerentes
+- **Esperado:** 
+  - Total ULs: ~16
+  - Coerentes: ~1 (criadas corretamente recentemente)
+  - Incoerentes: ~15 (devido ao hardcode anterior)
+- **Ação:** Nenhuma (dados antigos não são saneados automaticamente nesta tarefa)
+
+### 6. Impacto no Frontend
+- **Arquivo:** `FRONTEND/src/app/application/operacao/entradaestoque/components/entradaestoque/entradaestoque.component.ts`
+- **Status:** Sem alterações necessárias
+- **Comportamento:** Continua enviando `almoxarifadodestinoid` e `localizacaodestinoid` — backend valida e deriva WarehouseId corretamente
+
+### 7. Impacto no Mapa do Estoque
+- **Observação:** O problema do Mapa era sintoma, não causa. Novas entradas via UL agora persistirão com WarehouseId coerente.
+- **Dados antigos:** Permanecerão divergentes (requer saneamento futuro sob supervisão do usuário)
+- **Prognóstico:** Mapa melhorará conforme novas ULs sejam criadas com escopo correto
+
+### 8. Documentos Atualizados
+- `BACKEND/PRPA/App.Domain.Tests/EntradaEstoqueEscopoTests.cs` — 20 testes
+- `BACKEND/PRPA/App.Service/Services/EntradaDiretaSincronizacaoServices.cs` — validações + hardcode removido
+- `audit_unidades_logisticas.sql` — script de auditoria (pronto para uso)
+
+### Próximos Passos (Fora do Escopo Desta Tarefa)
+1. Executar `audit_unidades_logisticas.sql` contra BD produção
+2. Saneamento de ULs incoerentes (requer aprovação)
+3. Homologação de nova entrada via UL em almoxarifado ≠ 1
+4. Validação do Mapa com novas entradas
+
+---
+
+## 2026-10-01 — Unidades Logísticas — Finalização da Tela
+
+
+- **Tela:** Unidades Logísticas (`/home/operacao/unidades-logisticas`)
+- **Endpoint:** `GET /api/estoque/unidades-logisticas`
+- **Rota Backend:** `EstoqueUnidadesLogisticasController.Search()` (linha 37-48)
+- **Problema Inicial:** Faixa vermelha "Ocorreu um erro interno no servidor" aparecia durante operações na tela, mesmo com listagem visível.
+- **Causa Raiz Identificada:** Dois problemas de tradução LINQ-to-SQL no EF Core em `ConsultaOperacionalEstoqueService.cs`:
+  1. Linha 79: `c.Id.Value == id` — comparava Value Object com primitivo
+  2. Linha 257: `.OrderBy(c => c.Codigo.Value)` — tentava ordenar por `.Value` de Value Object em predicado LINQ
+- **Correções Realizadas:**
+  - Linha 79: Mudou de `.FirstOrDefaultAsync(c => c.Id.Value == id, ...)` para instanciar `UnidadeLogisticaId.Create(id)` e comparar direto: `.FirstOrDefaultAsync(c => c.Id == unidadeId, ...)`
+  - Linha 257: Mudou de `.OrderBy(c => c.Codigo.Value)` para `.OrderBy(c => c.Codigo)` — comparação de Value Object traduzível pelo EF Core
+- **Arquivos Backend Alterados:**
+  - `BACKEND/PRPA/App.Infra.Data/Persistence/Estoque/Consultas/ConsultaOperacionalEstoqueService.cs` (linhas 75-81, 255-260)
+- **Arquivos Frontend Alterados:** Nenhum
+- **Builds:**
+  - `dotnet build App.Infra.Data\App.Infra.Data.csproj` — Sucesso (0 erros)
+  - `npm run build` — Sucesso (0 erros)
+- **Testes Executados:**
+  - Listagem sem termo: HTTP 200 ✓
+  - Pesquisa por código: HTTP 200 ✓
+  - Pesquisa por ID: HTTP 200 ✓
+  - Pesquisa inexistente: HTTP 200 (lista vazia) ✓
+  - Detalhes da UL: HTTP 200 ✓
+  - Movimentações recentes: HTTP 200 ✓
+  - Localização e caminho: Funcionando ✓
+  - Botão Movimentar: Funcionando ✓
+
+## 2026-10-01 — Unidades Logísticas — Correção do Erro na Consulta Operacional
+
+- **Tela:** Unidades Logísticas (`/home/operacao/unidades-logisticas`)
+- **Endpoint:** `GET /api/estoque/unidades-logisticas`
+- **Problema:** Ao realizar busca com parâmetro `termo`, a API retornava HTTP 500 / "Ocorreu um erro interno no servidor".
+- **Causa Raiz:** O EF Core não conseguia traduzir a expressão LINQ contendo `.Value` em Value Objects (`c.Id.Value` e `c.Codigo.Value.Contains(...)`) para SQL, lançando `InvalidOperationException` ("The LINQ expression ... could not be translated").
+- **Correção realizada:**
+  - `BACKEND/PRPA/App.Infra.Data/Persistence/Estoque/Consultas/ConsultaOperacionalEstoqueService.cs`:
+    - Atualizada a expressão LINQ no método `SearchUnidadesLogisticasAsync` para comparar as propriedades mapeadas `c.Id` e `c.Codigo` diretamente com as instâncias dos Value Objects (`UnidadeLogisticaId` e `CodigoUnidadeLogistica`), permitindo que os `ValueConverter` do EF Core traduzam a consulta para SQL corretamente no banco de dados.
+- **Frontend:** Não foram necessárias alterações (o frontend já enviava o parâmetro `termo` de forma correta).
+- **Builds e Testes:**
+  - `dotnet build App.Infra.Data\App.Infra.Data.csproj` — Compilação com êxito (0 erros).
+  - `dotnet test App.Domain.Tests\App.Domain.Tests.csproj` — Aprovado (7/7 testes).
+  - `npm run build` (Frontend) — Concluído com sucesso (0 erros).
+
 ## 2026-08-28 — M1.4c-UX4-R — Autorização MVP baseada em roles (Estoque)
 
 - **Alteração backend:** `EstoqueAuthorization.UserHasPermission` (`BACKEND/PRPA/PRPA/Auth/EstoqueAuthorization.cs:44-66`) ajustado para aceitar roles administrativas conhecidas (`SuperAdmin`, `Admin`, `Administrador`) além das permission claims granulares. Isso implementa o modelo MVP: role autorizada no frontend/menu → mesma role autorizada no backend.
@@ -2068,3 +2191,43 @@ MES-ProjectBook/docs/00 - IA/HISTORICO_DE_EXECUCOES.md                          
 - ✅ Árvore completa carrega: BR001 → MP-01 → AREA1 → filhos → folhas ARMAZENA
 
 **GO** para declarar **Mapa do Estoque CONCLUÍDO** (M1.4c encerrado).
+## 2026-10-01 — Mapa do Estoque: correção de integração com o shell autenticado
+
+- Tela: Mapa do Estoque.
+- Rota: `/home/operacao/mapa-estoque`.
+- Correção: o template da feature passou a usar o container oficial `<section class="content">` do layout autenticado.
+- Causa: a tela estava fora do contexto de posicionamento e empilhamento usado pelo header/menu lateral, ficando sujeita à máscara do shell responsivo.
+- Escopo preservado: nenhum redesign, endpoint ou contrato de dados foi alterado.
+- Validação: build de produção concluído sem erros; validação visual autenticada permanece necessária.
+## 2026-10-01 — Mapa do Estoque: correção da faixa vazia de 100vh
+
+- Tela: Mapa do Estoque (`/home/operacao/mapa-estoque`).
+- Problema: uma faixa cinza ocupava praticamente toda a viewport entre o cabeçalho e os filtros.
+- Causa: colisão da classe local `page-header` com o tema global, que define `.page-header { height: 100vh; max-height: 1050px; }` para páginas hero/landing.
+- Solução: a classe da feature foi renomeada para `map-page-header` no HTML e SCSS, removendo a herança indevida sem alterar estilos globais ou usar deslocamentos negativos.
+- Arquivos: `mapa-estoque.component.html` e `mapa-estoque.component.scss`.
+- Build: produção concluída com zero erros.
+- Pendência: confirmação visual autenticada nas resoluções 1366x768, 1600x900 e 1920x1080, pois o controlador de navegador do ambiente não iniciou.
+## 2026-10-02 — Auditoria de Estoque / Operações (homologação incompleta)
+
+- Escopo: Entrada, Movimentações, Unidades Logísticas, Mapa, Transferência, Reserva, Bloqueio, Inventário, Ajuste e Lotes. Rotas verificadas no Angular e no menu persistido CMENU.
+- Contexto mantido: FRONTEND:4200 e BACKEND/PRPA:5046. Nenhuma correção funcional aplicada nesta rodada; alterações anteriores preservadas. Nenhuma migration, endpoint, entidade ou implementação de Produção criada.
+- Execução: shell HTTP200 nas dez rotas; GETs públicos testados; serviços reais de consulta UL/histórico/locais/mapa testados em leitura; consultas diretas ao banco somente SELECT.
+- Limitações: Browser não iniciou, impedindo navegação/console; login fornecido retornou401 com usuário não encontrado; GETs protegidos401 sem sessão válida. Registros destinados a operações persistentes não indicados; não houve POST/PUT/DELETE de estoque. Não afirmar homologação completa nem console sem erros.
+- Banco:0 lotes,14 saldos,31 movimentos legados sem lote,16 ULs,0 movimentações modernas.15 ULs com WarehouseId divergente do almoxarifado de sua localização; nenhum trigger encontrado no schema.
+- Defeitos: Entrada fixa WarehouseId1; mapa exclui15/16 ULs; consultas de locais alcançadas pela tela Movimentações falham na tradução EF; Fornecedor/ParametroValor/InventarioEstoqueItem404; PUTs de Bloqueio/Inventário/Ajuste incompatíveis com frontend; sincronização de saldo nos CRUDs de Transferência/Reserva/Bloqueio/Ajuste e geração de ajuste do Inventário não identificadas. Botão Movimentar e links pós-Entrada omitem /home; lote->UL e métricas de mapa apresentam lacunas.
+- Lotes: ausência real de dados confirmada por GET200[] e SELECT. Fornecedor404 também interrompe forkJoin; grafia de propriedades da resposta não normalizada na listagem. Origem implementada é cadastro manual; Entrada informa lote existente, obrigatório no backend quando Produto.ControlaLote. Criação automática não identificada.
+- Divergências documentais registradas: declaração histórica de Mapa concluído não demonstra consistência do dataset atual; catch do controller Entrada pode expor detalhes técnicos apesar de registro histórico em sentido contrário. Conteúdo existente preservado.
+- Builds: dotnet build PRPA.sln --no-restore --verbosity quiet,0 erros/2 avisos; npm.cmd run build,exit0/0 erros, warnings existentes preservados.
+- Documento oficial atualizado: [Estoque.md](../05%20-%20Estoque/Estoque.md), com matriz, diagnóstico por tela, ciclo do lote, evidências SELECT/HTTP, riscos e pendências. Nenhuma tela marcada homologada; Decision Logs não alterados.
+- Evidências locais: .codex/estoque-auditoria-20261002/network-readonly.json, network-samples.json, route-shell-results.json, selects.sql, db-select-results.json, service-read-results.json, db-read.log, backend-build.log, frontend-build.log. Credenciais/token não incluídos.
+- Prontidão: NÃO PRONTO para Produção/Apontamento. Levantamento de artefatos de Produção não iniciado, porque condicionado à estabilidade do Estoque. Próximas correções funcionais aguardam decisão do usuário; homologação runtime/persistente continua pendente.
+
+## 2026-10-02 — Complemento da auditoria: GETs autenticados
+
+- Login por e-mail informado pelo usuário: HTTP200. A limitação de autenticação da primeira passagem foi resolvida. Credenciais/token não persistidos nos artefatos.
+-16 GETs autenticados executados. UL: listagem/buscas/detalhes/histórico200; busca inexistente200 com0 itens; UL inexistente404 esperado. Histórico UL16 retorna items[]/totalCount0, sem500 nas chamadas de UL testadas.
+- Movimentações: GET estoque/locais/25, GET estoque/locais?page=1&pageSize=10 e GET estoque/locais/25/unidades-logisticas retornaram500. As falhas EF antes reproduzidas diretamente agora estão confirmadas também por HTTP autenticado. GET movimentação moderna1 retorna404, coerente com0 registros modernos.
+- Mapas dos almoxarifados11/12/14: HTTP200; ULs presentes0/0/1. Persistem15/16 ULs excluídas pelo WarehouseId divergente da localização.
+- Evidência: .codex/estoque-auditoria-20261002/network-authenticated.json. Estoque.md atualizado com complemento e tabela METHOD/URL/HTTP; primeira passagem preservada como histórico.
+- Nenhuma alteração funcional; nenhum POST/PUT/DELETE de estoque. Browser continua indisponível e dados para testes persistentes não indicados; homologação visual/persistente incompleta. Prontidão NÃO PRONTO; nenhuma tela marcada homologada.
